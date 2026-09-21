@@ -1,7 +1,7 @@
 {
   "name": "sdlc",
   "description": "An agent-run software delivery loop: intention, specs, tickets, test-driven implementation, typed review and delivery, with the repository as the only state and a human inbox for the decisions that are yours.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "kowuoscar"
   },

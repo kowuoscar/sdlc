@@ -41,7 +41,9 @@ Templates live in `${CLAUDE_SKILL_DIR}/templates/`.
    `coding-standards.md` with the matching `templates/stacks/` file, and tell the
    human which tool-config lines that stack file recommends instead of prose.
    A destination that already exists is never overwritten: show the diff and
-   ask — replace, merge or keep.
+   ask — replace, merge or keep. A file that was already in `docs/agents/` and
+   is not one of ours stays, and gets its row in `docs/agents/README.md` — read
+   it to write who it is for; the harness check fails on an unindexed file.
 
 5. **Install the map.** Put the `templates/agent-map.md` block into the
    existing `CLAUDE.md`, else the existing `AGENTS.md`; with neither, ask which

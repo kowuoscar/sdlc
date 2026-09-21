@@ -391,6 +391,11 @@ stalled feature is reported even when another feature supplies the action.
 
 `target` is the feature or epic slug, empty otherwise.
 
+A spec or an epic whose `status` is outside its vocabulary matches no rule, so
+the loop cannot see it. That is never fatal, and never silent: `state.py` warns
+with `spec-status-unknown` or `epic-status-unknown`, naming the file and the
+statuses that exist.
+
 ### `check_tickets.py <feature>`
 
 Mechanical half of the ticket critic. Errors: invalid frontmatter or slug,

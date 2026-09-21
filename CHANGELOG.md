@@ -4,7 +4,15 @@ All notable changes to this plugin. Versions follow semantic versioning; the
 template markers (`sdlc:template <name> <version>`) version the files the plugin
 writes into target repositories, independently of the plugin version.
 
-## [Unreleased]
+## [0.2.1] - 2026-09-22
+
+### Fixed
+
+- `sdlc-state` no longer passes over a spec or an epic whose status is outside
+  the vocabulary: it warns with `spec-status-unknown` or `epic-status-unknown`.
+  Such a feature matches no rule, so until now it silently vanished from the loop.
+- `init` indexes the files it finds already present in `docs/agents/`. An
+  unindexed file failed the harness check, and with it every merge.
 
 ### Added
 

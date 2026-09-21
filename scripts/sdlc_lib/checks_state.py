@@ -11,6 +11,9 @@ Warnings:
                              docs/roadmap/<epic>.md file
     templates-tree-missing  the plugin's skills/sdlc/templates/ tree could
                              not be found, so outdated_templates is empty
+    spec-status-unknown     a spec's status is outside the vocabulary, so no
+                             rule matches it and the loop cannot see the feature
+    epic-status-unknown     the same, for an epic
 
 Policy on malformed input (documented in the final report as a judgment
 call): a structural parse failure (frontmatter that does not parse) halts
@@ -117,6 +120,13 @@ def compute_state(repo: Path, result: Result, templates_dir: Optional[Path] = No
             return
         epics[slug] = epic
         epic_feature_lines[slug] = roadmap_mod.epic_feature_lines(epic)
+        if epic.status not in roadmap_mod.EPIC_STATUSES:
+            result.warning(
+                "epic-status-unknown",
+                "status %r is not one of %s: no rule matches this epic, so the loop cannot see it"
+                % (epic.status, ", ".join(roadmap_mod.EPIC_STATUSES)),
+                relpath(repo, p),
+            )
 
     # ---- features: discovery ----
     features_root = repo / FEATURES_DIR
@@ -136,6 +146,14 @@ def compute_state(repo: Path, result: Result, templates_dir: Optional[Path] = No
             rel = relpath(repo, p)
             result.fail_fatal("frontmatter-invalid", "%s: %s" % (rel, exc), rel)
             return
+        spec_status = str(feature_specs[slug].frontmatter.get("status") or "")
+        if spec_status not in spec_mod.STATUSES:
+            result.warning(
+                "spec-status-unknown",
+                "status %r is not one of %s: no rule matches this feature, so the loop cannot see it"
+                % (spec_status, ", ".join(spec_mod.STATUSES)),
+                relpath(repo, p),
+            )
 
     def feature_epic(slug: str) -> str:
         return feature_specs[slug].frontmatter.get("epic") or ""

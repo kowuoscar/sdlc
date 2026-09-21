@@ -525,3 +525,49 @@ class TestGlobsMatchNothingTests(StateTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class UnknownStatusTests(StateTestCase):
+    """A status outside the vocabulary matches no rule: the feature or epic becomes
+    invisible to the loop. That must be said, not passed over in silence."""
+
+    def warning_paths(self, result, code):
+        return [w["path"] for w in result.to_dict()["warnings"] if w["code"] == code]
+
+    def test_a_spec_with_an_unknown_status_is_reported(self):
+        self.repo.config()
+        self.repo.journeys([("Pay online", "wanted")])
+        self.repo.spec("card-checkout", status="implemented")
+        result = self.compute()
+        self.assertEqual(self.warning_paths(result, "spec-status-unknown"),
+                         ["docs/features/card-checkout/spec.md"])
+        message = [w["message"] for w in result.to_dict()["warnings"] if w["code"] == "spec-status-unknown"][0]
+        self.assertIn("implemented", message)
+        self.assertIn("accepted", message, "the message lists the statuses that exist")
+
+    def test_an_epic_with_an_unknown_status_is_reported(self):
+        self.repo.config()
+        self.repo.journeys([("Pay online", "wanted")])
+        self.repo.roadmap_readme(["online-payment"])
+        self.repo.epic("online-payment", status="ongoing")
+        result = self.compute()
+        self.assertEqual(self.warning_paths(result, "epic-status-unknown"),
+                         ["docs/roadmap/online-payment.md"])
+
+    def test_known_statuses_are_not_reported(self):
+        self.repo.config()
+        self.repo.journeys([("Pay online", "wanted")])
+        self.repo.roadmap_readme(["online-payment"])
+        self.repo.epic("online-payment", status="planned")
+        self.repo.spec("card-checkout", status="accepted")
+        result = self.compute()
+        self.assertEqual(self.warning_paths(result, "spec-status-unknown"), [])
+        self.assertEqual(self.warning_paths(result, "epic-status-unknown"), [])
+
+    def test_an_unknown_status_is_a_warning_never_fatal(self):
+        self.repo.config()
+        self.repo.journeys([("Pay online", "wanted")])
+        self.repo.spec("card-checkout", status="implemented")
+        result = self.compute()
+        self.assertTrue(result.to_dict()["ok"])
+        self.assertIn("next", result.to_dict())

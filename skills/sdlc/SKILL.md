@@ -30,7 +30,9 @@ to run for hours.
    The lock is a two-hour lease that step 6 renews. Token lost to a compaction:
    `sdlc-lock status` shows it.
 3. **Read the state**: `sdlc-state`. It prints the inbox, every feature's
-   progress and the single `next.action`. Trust it over your memory of earlier
+   progress and the single `next.action`. Its `warnings` are yours to act on:
+   a spec or epic with an unknown status is invisible to the loop until you
+   correct it — a typo is yours to fix, anything else is a question. Trust it over your memory of earlier
    turns; after a compaction it is all you need.
 4. **First turn only — the human's side.** Show the open inbox, in the order
    the state gives it, one line per item. When the state lists
