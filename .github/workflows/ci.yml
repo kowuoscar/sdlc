@@ -32,11 +32,13 @@ jobs:
       - name: Unit tests
         run: python -m unittest discover -s tests -v 2>&1 | tee test-report.txt
       - name: Upload test report
-        if: always()
+        # Only when something failed: a green run's report is noise that costs storage.
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-report-py${{ matrix.python }}-${{ matrix.os }}
           path: test-report.txt
+          retention-days: 7
 
   lint:
     runs-on: ubuntu-latest
@@ -95,3 +97,4 @@ jobs:
           name: sdlc-plugin
           path: dist/
           if-no-files-found: error
+          retention-days: 14
