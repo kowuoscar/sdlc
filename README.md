@@ -55,7 +55,7 @@ action out of bounds. Everything else the agent decides and records.
 ## Install
 
 ```
-/plugin marketplace add <owner>/sdlc
+/plugin marketplace add kowuoscar/sdlc
 /plugin install sdlc@sdlc
 ```
 
