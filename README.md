@@ -13,9 +13,9 @@ and no others; the only other stops are the gates you switched on yourself.
 /sdlc:sdlc <anything>     an idea, an answer to the inbox, a verdict on a delivery
 ```
 
-`/sdlc:sdlc` is the plugin-qualified name and always works. The short `/sdlc`
-belongs to whichever command claims it first, so a personal `commands/sdlc.md`
-shadows the plugin. This document writes `/sdlc` for brevity.
+Once installed, the short `/sdlc` works too, as long as no personal
+`commands/sdlc.md` or skill of the same name shadows it; this document writes
+`/sdlc` throughout.
 
 ## How it works
 
@@ -59,7 +59,17 @@ action out of bounds. Everything else the agent decides and records.
 /plugin install sdlc@sdlc
 ```
 
-From a local checkout: `claude --plugin-dir /path/to/sdlc`.
+From a local checkout, for one session: `claude --plugin-dir /path/to/sdlc`.
+Installed for good from a local checkout:
+
+```
+claude plugin marketplace add /path/to/sdlc
+claude plugin install sdlc@sdlc
+```
+
+An installed plugin is a **cached copy** of the version in `plugin.json`. After
+changing this repository, bump the version, then
+`claude plugin marketplace update sdlc && claude plugin update sdlc@sdlc`.
 
 Then, in the repository you want built: `/sdlc`. The first run initialises it —
 after asking — and shows you the permission list before writing it.
