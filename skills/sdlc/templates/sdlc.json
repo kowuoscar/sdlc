@@ -1,0 +1,24 @@
+{
+  "template": "sdlc-config 1",
+  "schema": 1,
+  "verify": "<set me: one command that runs tests, lint and types>",
+  "spec_gate": "always",
+  "merge": "auto",
+  "max_implementers": 3,
+  "ticket_budget_turns": 60,
+  "session_budget_features": 3,
+  "max_pending_acceptance": 3,
+  "debt_threshold_per_module": 5,
+  "map_max_lines": 120,
+  "module_roots": ["src"],
+  "test_globs": ["**/*.test.*", "**/*.spec.*", "**/*_test.go", "**/src/test/**"],
+  "main_branch": "main",
+  "pull_requests": false,
+  "skills": {
+    "interview": "grilling",
+    "domain": "domain-modeling",
+    "tdd": "tdd",
+    "debugging": "diagnosing-bugs",
+    "design": "impeccable"
+  }
+}

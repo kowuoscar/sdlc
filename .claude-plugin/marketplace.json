@@ -1,0 +1,16 @@
+{
+  "name": "sdlc",
+  "owner": {
+    "name": "kowuoscar"
+  },
+  "plugins": [
+    {
+      "name": "sdlc",
+      "source": "./",
+      "description": "An agent-run software delivery loop with the repository as the only state and a human inbox for the decisions that are yours."
+    }
+  ],
+  "metadata": {
+    "description": "Marketplace for the sdlc plugin: an agent-run software delivery loop."
+  }
+}

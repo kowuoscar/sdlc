@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.DS_Store
+.sdlc/
+dist/
+.ruff_cache/
+eval-results/

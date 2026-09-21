@@ -1,0 +1,17 @@
+#!/bin/sh
+# Resolves its own real location (it may be reached through a symlinked
+# PATH entry) and execs the matching python script in ../scripts/.
+set -e
+
+SOURCE="$0"
+while [ -h "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+  LINK="$(readlink "$SOURCE")"
+  case "$LINK" in
+    /*) SOURCE="$LINK" ;;
+    *) SOURCE="$DIR/$LINK" ;;
+  esac
+done
+DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+
+exec python3 "$DIR/../scripts/check_harness.py" "$@"

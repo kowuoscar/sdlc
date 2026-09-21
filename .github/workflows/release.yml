@@ -1,0 +1,36 @@
+name: release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: The tag matches plugin.json
+        run: |
+          version=$(python -c "import json;print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          test "v${version}" = "${GITHUB_REF_NAME}" || { echo "tag ${GITHUB_REF_NAME} != plugin.json v${version}"; exit 1; }
+      - name: Tests
+        run: python -m unittest discover -s tests
+      - name: Structure
+        run: python tools/validate_plugin.py
+      - name: Package
+        run: python tools/package.py
+      - name: Release notes from the changelog
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '$0 ~ "^## \\[?"v {p=1; next} p && /^## / {exit} p' CHANGELOG.md > notes.md
+          test -s notes.md || echo "Release ${GITHUB_REF_NAME}" > notes.md
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/*.zip dist/SHA256SUMS --title "${GITHUB_REF_NAME}" --notes-file notes.md

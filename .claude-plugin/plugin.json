@@ -1,0 +1,19 @@
+{
+  "name": "sdlc",
+  "description": "An agent-run software delivery loop: intention, specs, tickets, test-driven implementation, typed review and delivery, with the repository as the only state and a human inbox for the decisions that are yours.",
+  "version": "0.1.0",
+  "author": {
+    "name": "kowuoscar"
+  },
+  "license": "MIT",
+  "keywords": [
+    "sdlc",
+    "workflow",
+    "orchestration",
+    "specs",
+    "tickets",
+    "tdd",
+    "code-review",
+    "autonomy"
+  ]
+}
