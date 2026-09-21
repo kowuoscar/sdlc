@@ -17,8 +17,8 @@ Once installed, the short `/sdlc` works too, as long as no personal
 `commands/sdlc.md` or skill of the same name shadows it; this document writes
 `/sdlc` throughout.
 
-A presentation of the whole loop, station by station, lives in [`site/`](site/index.html)
-and is published with GitHub Pages when the repository has it enabled.
+**[kowuoscar.github.io/sdlc](https://kowuoscar.github.io/sdlc/)** presents the whole loop,
+station by station, with a walk through one feature. Its source is [`site/`](site/).
 
 ## How it works
 
