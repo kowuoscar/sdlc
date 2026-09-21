@@ -68,10 +68,10 @@ its filename without the extension.
   "pull_requests": false,
   "forbidden_commands": [],
   "skills": {
-    "interview": "grilling",
-    "domain": "domain-modeling",
-    "tdd": "tdd",
-    "debugging": "diagnosing-bugs",
+    "interview": "bundled",
+    "domain": "bundled",
+    "tdd": "bundled",
+    "debugging": "bundled",
     "design": "impeccable"
   }
 }
@@ -94,7 +94,7 @@ its filename without the extension.
 | `main_branch` | branch name | Integration branch. |
 | `pull_requests` | `true` \| `false` | `true`: feature branches are pushed to `origin`, a draft pull request is opened, and delivery merges it with `gh`. `false`: everything stays local and delivery is a local `--no-ff` merge. |
 | `forbidden_commands` | list of regular expressions | Bash commands the plugin's guard hook refuses in this repository, on top of its built-ins (force-push, history rewriting, deleting the main branch). For deploy and publish commands. |
-| `skills` | object, slot → skill name | Method slots. An agent reaching a slot loads the named skill when it is installed and falls back to the essentials embedded in its own prompt when it is not. An empty string disables a slot. `design` is only used on tickets labelled `frontend`. |
+| `skills` | object, slot → `bundled` or a skill name | Method slots. `bundled` means the copy of the upstream method shipped in the plugin's `methods/` directory, which the agent reads as a file. Any other value names an installed skill the agent loads with the Skill tool instead. An empty string disables a slot. `design` has no bundled copy: it names an installed skill or plugin (`impeccable` by default), required for projects with a user interface and only used on tickets labelled `frontend`. |
 
 Missing keys take the defaults shown above, except `verify`, which is required.
 Unknown keys are preserved and ignored. `skills` merges slot by slot: a config

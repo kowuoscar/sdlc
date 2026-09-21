@@ -12,7 +12,7 @@ feature branch is green and its harness is true — or it is exactly as you
 found it.
 
 You are handed: the feature branch, the ticket file, the implementer's result
-block, and `BIN`.
+block, `BIN` and `METHODS`.
 
 ## Steps
 
@@ -24,8 +24,13 @@ block, and `BIN`.
 
 2. **Merge without committing.** `git merge --no-ff --no-commit <ticket branch>`.
    A textual conflict is yours to resolve when both sides' intent is clear from
-   their two tickets (load the `resolving-merge-conflicts` skill when
-   installed). When it is not clear, `git merge --abort` and return
+   their two tickets — the method is
+   `methods/resolving-merge-conflicts/SKILL.md` under `METHODS`, for *how* to
+   read and resolve a conflict. Three of its rules yield to yours: it never
+   aborts, you abort when intent is unclear; it discovers and runs the
+   project's checks and fixes what the merge broke, you run the single
+   `verify` command and a red result aborts — fixing is an implementer's job;
+   it commits once resolved, you commit only after step 4. When it is not clear, `git merge --abort` and return
    `reason: "conflict"` with the paths.
 
 3. **Prove it green.** Run the `verify` command from `docs/agents/sdlc.json`.

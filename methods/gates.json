@@ -1,0 +1,155 @@
+{
+  "gates": [
+    {
+      "file": "tdd/SKILL.md",
+      "match": "confirm them with the user",
+      "replaced_by": "The seams are agreed in the feature spec's `## Testing decisions`; an implementer that needs another seam returns `blocked`."
+    },
+    {
+      "file": "tdd/SKILL.md",
+      "match": "Ask: \"What's the public interface",
+      "replaced_by": "The seams are agreed in the feature spec's `## Testing decisions`; an implementer that needs another seam returns `blocked`."
+    },
+    {
+      "file": "to-spec/SKILL.md",
+      "match": "Check with the user that these seams",
+      "replaced_by": "The spec-writer decides the seams and records them under `## Testing decisions` and `## Decisions taken`."
+    },
+    {
+      "file": "to-spec/SKILL.md",
+      "match": "tell the user to run",
+      "replaced_by": "`docs/agents/issue-tracker.md` is installed by the init phase and handed to the agent as a pointer."
+    },
+    {
+      "file": "to-tickets/SKILL.md",
+      "match": "tell the user to run",
+      "replaced_by": "`docs/agents/issue-tracker.md` is installed by the init phase and handed to the agent as a pointer."
+    },
+    {
+      "file": "to-tickets/SKILL.md",
+      "match": "Quiz the user",
+      "replaced_by": "Replaced by `sdlc-check-tickets` and the independent `ticket-critic` (`docs/agents/ticket-critic.md`), one revision, then escalation."
+    },
+    {
+      "file": "to-tickets/SKILL.md",
+      "match": "Present the proposed breakdown",
+      "replaced_by": "Replaced by `sdlc-check-tickets` and the independent `ticket-critic` (`docs/agents/ticket-critic.md`), one revision, then escalation."
+    },
+    {
+      "file": "to-tickets/SKILL.md",
+      "match": "Ask the user:",
+      "replaced_by": "Replaced by `sdlc-check-tickets` and the independent `ticket-critic` (`docs/agents/ticket-critic.md`), one revision, then escalation."
+    },
+    {
+      "file": "to-tickets/SKILL.md",
+      "match": "Does the granularity feel right",
+      "replaced_by": "Replaced by `sdlc-check-tickets` and the independent `ticket-critic` (`docs/agents/ticket-critic.md`), one revision, then escalation."
+    },
+    {
+      "file": "to-tickets/SKILL.md",
+      "match": "Are the blocking edges correct",
+      "replaced_by": "Replaced by `sdlc-check-tickets` and the independent `ticket-critic` (`docs/agents/ticket-critic.md`), one revision, then escalation."
+    },
+    {
+      "file": "to-tickets/SKILL.md",
+      "match": "Should any tickets be merged or split",
+      "replaced_by": "Replaced by `sdlc-check-tickets` and the independent `ticket-critic` (`docs/agents/ticket-critic.md`), one revision, then escalation."
+    },
+    {
+      "file": "to-tickets/SKILL.md",
+      "match": "Iterate until the user approves",
+      "replaced_by": "Replaced by `sdlc-check-tickets` and the independent `ticket-critic` (`docs/agents/ticket-critic.md`), one revision, then escalation."
+    },
+    {
+      "file": "code-review/SKILL.md",
+      "match": "tell the user to run",
+      "replaced_by": "Reviewers are handed the spec and `docs/agents/review.md` directly; the issue tracker is not needed to review."
+    },
+    {
+      "file": "code-review/SKILL.md",
+      "match": "ask for it",
+      "replaced_by": "The orchestrator supplies the fixed point: the main branch."
+    },
+    {
+      "file": "code-review/SKILL.md",
+      "match": "ask the user where the spec is",
+      "replaced_by": "The orchestrator hands over the spec path."
+    },
+    {
+      "file": "diagnosing-bugs/SKILL.md",
+      "match": "ask the user",
+      "replaced_by": "No human is present during execution: the implementer returns `failed` with its diagnosis, and a second failure is escalation case 4."
+    },
+    {
+      "file": "diagnosing-bugs/SKILL.md",
+      "match": "a human must click, drive",
+      "replaced_by": "No human is present during execution: the implementer returns `failed` with its diagnosis, and a second failure is escalation case 4."
+    },
+    {
+      "file": "diagnosing-bugs/SKILL.md",
+      "match": "Ask the user for",
+      "replaced_by": "No human is present during execution: the implementer returns `failed` with its diagnosis, and a second failure is escalation case 4."
+    },
+    {
+      "file": "diagnosing-bugs/SKILL.md",
+      "match": "a human in the loop only via",
+      "replaced_by": "No human is present during execution: the implementer returns `failed` with its diagnosis, and a second failure is escalation case 4."
+    },
+    {
+      "file": "diagnosing-bugs/SKILL.md",
+      "match": "Show the ranked list to the user",
+      "replaced_by": "No human is present during execution: the implementer returns `failed` with its diagnosis, and a second failure is escalation case 4."
+    },
+    {
+      "file": "retro/SKILL.md",
+      "match": "Present these candidates to the user",
+      "replaced_by": "Filed as one `proposal` inbox item at epic closure."
+    },
+    {
+      "file": "domain-modeling/SKILL.md",
+      "match": "do you mean the Customer or the User",
+      "replaced_by": "During the interview the human is present; elsewhere the agent applies the discipline to the text it reads and declares term changes in its result."
+    },
+    {
+      "file": "domain-modeling/SKILL.md",
+      "match": "check whether the code agrees",
+      "replaced_by": "During the interview the human is present; elsewhere the agent applies the discipline to the text it reads and declares term changes in its result."
+    },
+    {
+      "file": "domain-modeling/CONTEXT-FORMAT.md",
+      "match": "If unclear, ask.",
+      "replaced_by": "An unattended agent declares the term in its result with its best reading; the orchestrator or the merger arbitrates (agents/merger.md), and a term that changes what the user sees is escalation case 1."
+    }
+  ],
+  "exempt_files": [
+    {
+      "file": "grilling/SKILL.md",
+      "reason": "Conversational by design: only loaded in phases where the human is present (intention, admission, plan-epic with the human in session)."
+    },
+    {
+      "file": "writing-for-agents/SKILL.md",
+      "reason": "Reference for maintainers writing prompts, not followed by loop agents."
+    },
+    {
+      "file": "writing-for-agents/SKILL-MECHANICS.md",
+      "reason": "Reference for maintainers writing prompts, not followed by loop agents."
+    },
+    {
+      "file": "diagnosing-bugs/scripts/hitl-loop.template.sh",
+      "reason": "Interactive by design and never executed by the loop: the implementer returns `failed` instead of putting a human in the loop (agents/implementer.md)."
+    }
+  ],
+  "reviewed": {
+    "code-review": "5c30899b48d9b6ab7e11d757f5e2cde6bfb7a31589e6569554e11fc5d2966a8a",
+    "diagnosing-bugs": "51d2db3bee7ade327e0b056f57b9edf32dd93443b69e695e2ebe200b580a77bd",
+    "domain-modeling": "9cbda7943fb10b9bb8b673d20040be0f396f513ae4dd80a285048dd795bb8871",
+    "grilling": "ba55ce0d307632006373dfec38ba19cf192c7ebf2d15e433633854eb25fba4a3",
+    "implement-spec": "cddbfa305dd50526a79cb710d93f69af77109db628eaf5a74626fb55209175fe",
+    "resolving-merge-conflicts": "bd1f8f49999ab1e99103177f473d2c9624c558305a894e54dc198de05939eeb6",
+    "retro": "c0fb9fd38c7805dc545935ae610c43a6bdd8cddf3b67ac70e9a8adabf48515a6",
+    "tdd": "ba9e64eb2beb8d66c6f06b60e69d8570206e3384e399d62d422a9e432c08123f",
+    "to-spec": "737e111ae8e19765b58cb33ceacf081e471d1bd4a758e50182a7d2f02060d06c",
+    "to-tickets": "24a4f47a51191dc8da8e5d1e524910c156ae5bfd68c5a1069730b2d06c0417a4",
+    "writing-for-agents": "764d178582565c68b7e3a805e041960a0c798c63bb62898f5f04757cb23ece6c"
+  }
+}

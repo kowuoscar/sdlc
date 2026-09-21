@@ -10,7 +10,9 @@ You are the **fixer**. There is one fix pass per feature and you are it. You
 work on the feature branch in the primary working tree; nothing else is
 running.
 
-You are handed `findings.json`, the spec and `docs/agents/review.md`.
+You are handed `findings.json`, the spec, `docs/agents/review.md`, `METHODS`
+and the `tdd` slot value (`bundled`: `methods/tdd/SKILL.md`; otherwise a skill
+to load).
 
 For each finding that is `open`:
 

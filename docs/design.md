@@ -75,10 +75,26 @@ of it.
 ## Owning the sequence, borrowing the method
 
 The plugin owns what makes the loop a loop: the sequence, the formats, the
-verdicts, the escalation policy. It borrows *method* — how to interview, model
-a domain, do TDD, debug, design — from installed skills through named slots,
-and says what replaces the places where those skills would ask the user. A
-missing skill degrades to embedded essentials rather than breaking the loop.
+verdicts, the escalation policy. It borrows *method* — how to interview, write
+a spec, cut tickets, do TDD, debug, review — from Matt Pocock's skills, and
+says what replaces the places where those skills would turn to the user.
+
+Three ways of borrowing were weighed. *Paraphrasing* the methods into our
+agents froze them at the day of writing. *Depending on installed skills* kept
+them current but made the loop behave differently from one machine to the
+next, could not be declared (they are not plugins), and could not reach the
+methods marked `disable-model-invocation`. **Vendoring** verbatim copies under
+`methods/` — plain files, not skills — gives one known version everywhere and
+makes every method readable. A weekly sync keeps it current, through a pull
+request rather than a push, because an upstream change can add a human gate
+and an unattended agent that meets one stalls or guesses. `methods/gates.json`
+registers every gate and what replaces it. Spotting a gate is pattern
+matching, and no pattern covers every phrasing, so the guarantee is a hash:
+the registry records each method's digest as last read by a person, and the
+check fails on any method that changed since — an update cannot be merged
+until someone has read it and said so. The design
+method is the exception: impeccable is a plugin with hooks and scripts of its
+own, so it stays an installed dependency.
 
 Templates are owned for the same reason: a file the loop reads must not change
 shape because a third-party skill did. Where another tool reads the same file

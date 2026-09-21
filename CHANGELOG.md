@@ -4,6 +4,26 @@ All notable changes to this plugin. Versions follow semantic versioning; the
 template markers (`sdlc:template <name> <version>`) version the files the plugin
 writes into target repositories, independently of the plugin version.
 
+## [0.2.0] - 2026-09-21
+
+### Changed
+
+- Methods are now **bundled**: `methods/` holds verbatim copies of eleven of
+  Matt Pocock's skills (MIT), read by agents as files. The agents' paraphrases
+  and "skill missing" fallbacks are gone; phases and agents name the method
+  file they follow and what replaces each of its human gates.
+- The `interview`, `domain`, `tdd` and `debugging` slots default to `bundled`;
+  a skill name still overrides. `design` stays an installed dependency
+  (`impeccable`), checked at init.
+
+### Added
+
+- `tools/sync_methods.py` and a weekly workflow that syncs `methods/` with
+  upstream through a pull request carrying the diff and the check results.
+- `methods/gates.json` and `tools/check_method_gates.py`: a registry of every
+  human gate in the methods and what replaces it; an unregistered gate fails
+  the tests.
+
 ## [0.1.0] - 2026-09-21
 
 First version of the loop.

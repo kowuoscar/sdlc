@@ -14,7 +14,7 @@ import sys
 import zipfile
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-SHIPPED = [".claude-plugin", "skills", "agents", "hooks", "bin", "scripts",
+SHIPPED = [".claude-plugin", "skills", "agents", "hooks", "bin", "scripts", "methods",
            "README.md", "CHANGELOG.md", "LICENSE"]
 SKIP_DIRS = {"__pycache__"}
 FIXED_TIME = (2020, 1, 1, 0, 0, 0)

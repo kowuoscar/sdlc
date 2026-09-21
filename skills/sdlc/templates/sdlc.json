@@ -15,10 +15,10 @@
   "main_branch": "main",
   "pull_requests": false,
   "skills": {
-    "interview": "grilling",
-    "domain": "domain-modeling",
-    "tdd": "tdd",
-    "debugging": "diagnosing-bugs",
+    "interview": "bundled",
+    "domain": "bundled",
+    "tdd": "bundled",
+    "debugging": "bundled",
     "design": "impeccable"
   }
 }

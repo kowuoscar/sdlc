@@ -14,7 +14,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import validate_plugin  # noqa: E402
 
-SHIPPED = [".claude-plugin", "skills", "agents", "hooks", "bin", "scripts", "docs",
+SHIPPED = [".claude-plugin", "skills", "agents", "hooks", "bin", "scripts", "docs", "methods",
            "README.md", "CHANGELOG.md", "LICENSE"]
 
 
@@ -94,6 +94,40 @@ class ValidatePluginTest(unittest.TestCase):
     def test_a_non_executable_binary_is_an_error(self):
         os.chmod(os.path.join(self.root, "bin/sdlc-state"), 0o644)
         self.assertIn("binary-not-executable", codes(validate_plugin.validate(self.root)))
+
+    def test_methods_upstream_json_missing_is_an_error(self):
+        os.remove(os.path.join(self.root, "methods/UPSTREAM.json"))
+        report = validate_plugin.validate(self.root)
+        self.assertTrue(any(e["code"] == "file-missing" and e["path"] == "methods/UPSTREAM.json"
+                            for e in report.errors))
+
+    def test_a_method_without_skill_md_is_an_error(self):
+        os.remove(os.path.join(self.root, "methods/tdd/SKILL.md"))
+        self.assertIn("method-missing", codes(validate_plugin.validate(self.root)))
+
+    def test_methods_license_missing_is_an_error(self):
+        os.remove(os.path.join(self.root, "methods/LICENSE"))
+        report = validate_plugin.validate(self.root)
+        self.assertTrue(any(e["code"] == "file-missing" and e["path"] == "methods/LICENSE"
+                            for e in report.errors))
+
+    def test_a_stray_skill_md_under_skills_is_an_error(self):
+        extra = os.path.join(self.root, "skills/extra")
+        os.makedirs(extra, exist_ok=True)
+        with open(os.path.join(extra, "SKILL.md"), "w", encoding="utf-8") as handle:
+            handle.write("---\nname: extra\ndescription: a vendored method masquerading as a skill\n---\n")
+        self.assertIn("skill-under-skills", codes(validate_plugin.validate(self.root)))
+
+    def test_an_unregistered_human_gate_under_methods_is_an_error(self):
+        with open(os.path.join(self.root, "methods/tdd/SKILL.md"), "a", encoding="utf-8") as handle:
+            handle.write("\nQuiz the user about the seams before continuing.\n")
+        codes_found = codes(validate_plugin.validate(self.root))
+        self.assertTrue(any(c.startswith("method-gate-") for c in codes_found), codes_found)
+
+    def test_a_methods_path_cited_that_does_not_exist_is_an_error(self):
+        self.edit("skills/sdlc/phases/tickets.md", "`methods/to-tickets/SKILL.md`",
+                 "`methods/to-tickets/DOES-NOT-EXIST.md`")
+        self.assertIn("methods-path-missing", codes(validate_plugin.validate(self.root)))
 
 
 class PackageTest(unittest.TestCase):

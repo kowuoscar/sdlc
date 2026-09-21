@@ -5,8 +5,11 @@ their judgement is an independent critic upstream and a way out downstream.
 
 ## Steps
 
-1. **Cut.** Spawn `sdlc:ticket-writer` with the spec, `ARCHITECTURE.md` and
-   `docs/agents/issue-tracker.md`. First-ticket conventions:
+1. **Cut.** Spawn `sdlc:ticket-writer` with the spec, `ARCHITECTURE.md`,
+   `docs/agents/issue-tracker.md`, `docs/agents/ticket-critic.md`, `BIN` and
+   `METHODS` — its method is
+   `methods/to-tickets/SKILL.md`, whose quiz of the user is replaced by steps
+   2 to 4 below. First-ticket conventions:
    - the very first ticket of an empty project is
      `templates/tickets/foundation.md` — without `verify` nothing after it is
      checkable;

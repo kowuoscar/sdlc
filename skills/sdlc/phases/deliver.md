@@ -19,7 +19,12 @@ merge commit and no later revert of it, the merge happened — resume at the
    the loop return to `execute`.
 
 2. **Review, in parallel**, each agent with a fresh context and pointers only
-   (spec, `docs/agents/review.md`, the diff command `git diff <main>...HEAD`):
+   (spec, `docs/agents/review.md`, `METHODS`, the diff command
+   `git diff <main>...HEAD`). The review method is
+   `methods/code-review/SKILL.md` — two axes that never see each other's
+   context; you supply what it would ask the user for (the fixed point is the
+   main branch, the spec is this feature's), and `docs/agents/review.md` turns
+   its report into typed findings and a verdict:
    - `sdlc:reviewer-spec` and `sdlc:reviewer-standards`;
    - `sdlc:acceptance-runner` on the spec's whole walkthrough — it plays the
      `[agent]` steps and returns the `[human]` ones as `pending`, because
@@ -37,7 +42,8 @@ merge commit and no later revert of it, the merge happened — resume at the
    re-review gets `after_review: true`.
 
 3. **One fix pass.** With no blocking finding, skip. Otherwise spawn one
-   `sdlc:fixer` with `findings.json`. It fixes every blocking finding, and the
+   `sdlc:fixer` with `findings.json`, the spec, `docs/agents/review.md`,
+   `METHODS` and the `tdd` slot value. It fixes every blocking finding, and the
    smells that sit in lines this feature already changed; other smells become
    debt. Mark what it fixed `fixed`.
 
