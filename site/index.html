@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sdlc — the agent schedules, you are the interrupt</title>
+<meta name="description" content="A Claude Code plugin that lets an agent run a software project end to end, and reaches you only for the decisions that are yours. How the loop works, station by station.">
+<meta name="theme-color" content="#f3efe6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%2317171a'/%3E%3Ccircle cx='8' cy='8' r='3.5' fill='%23c2301a'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/ibm-plex-serif-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <a class="wordmark" href="#top">/sdlc<span>.</span></a>
+  <nav aria-label="Sections">
+    <a href="#rule">The rule</a>
+    <a href="#walk">One feature</a>
+    <a href="#line">The line</a>
+    <a href="#your-side">Your side</a>
+    <a href="#mechanical">Guarantees</a>
+    <a href="#methods">Methods</a>
+    <a href="#install">Install</a>
+  </nav>
+  <button class="theme" type="button" id="theme" aria-label="Switch colour theme">Theme</button>
+</header>
+
+<main id="main">
+
+<section class="hero" id="top">
+  <h1>The agent schedules. <span class="you">You are the interrupt.</span></h1>
+  <div class="hero-grid">
+    <div>
+      <p class="lede"><strong>sdlc is a Claude Code plugin that runs a software project for you</strong> — journeys, epics, specs, tickets, test-first code, review, merge — and reaches you only for the decisions that are yours.</p>
+      <dl class="commands">
+        <div><dt><code>/sdlc</code></dt><dd>continue the project</dd></div>
+        <div><dt><code>/sdlc &lt;anything&gt;</code></dt><dd>an idea, an answer, a verdict on a delivery</dd></div>
+      </dl>
+    </div>
+    <ul class="legend" aria-label="How to read this page">
+      <li><b><i class="k-you"></i>You</b><span>What you want, five kinds of question, and checking the result by hand.</span></li>
+      <li><b><i class="k-agent"></i>An agent</b><span>Reads, writes, builds, judges. Ten roles, each on the model that fits it.</span></li>
+      <li><b><i class="k-script"></i>A script</b><span>Whatever can be decided mechanically is. No opinion, no tokens.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section id="why">
+  <div class="section-head">
+    <h2>A pipeline makes you the scheduler.</h2>
+    <p>You know what comes next, you launch it, and you remember what was put off. Everything that went wrong with a chain of commands came from that one fact.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Before: you hold the project</h3>
+      <ol class="track">
+        <li class="is-you">you: run the spec command</li>
+        <li>agent: interviews you, writes a spec</li>
+        <li class="is-you">you: approve, run the ticket command</li>
+        <li>agent: cuts tickets</li>
+        <li class="is-you">you: approve, run the implement command</li>
+        <li>agent: builds</li>
+        <li class="is-you">you: work out what to test, and what you meant to do next</li>
+      </ol>
+    </div>
+    <div>
+      <h3>Now: the repository holds it</h3>
+      <ol class="track loops">
+        <li class="is-you">you: say what you want, once</li>
+        <li class="is-script">script: read the repository, name the next action</li>
+        <li>agent: take that one action, write the result back</li>
+        <li class="is-script">script: read the repository again</li>
+        <li>…and round, until nothing is actionable</li>
+      </ol>
+      <p style="margin-top:1.2rem">You are reached through a file inbox, in five defined cases. Everything else the agent decides — and writes down, so you can overrule it later.</p>
+    </div>
+  </div>
+</section>
+
+<section id="rule">
+  <div class="section-head">
+    <h2>One rule: the loop is stateless. The repository is the state.</h2>
+    <p>No conversation has to survive. Any session — today's, tomorrow's, one that crashed halfway — reads the files, takes one step, writes the result. Status lives in frontmatter; nothing derived is ever stored.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <p>Every turn starts with the same call. A script walks <code>docs/</code> and applies eight rules, first match wins. The same repository always yields the same answer, and it costs no tokens to get it.</p>
+      <p>The orchestrator never reads source code. It holds the graph, hands <em>pointers</em> to subagents, and acts on the typed result each one returns. That is what lets one session run for hours.</p>
+      <p>Because the loop keeps nothing in its head, only one thing can stop it for good: a question only you can answer.</p>
+    </div>
+    <pre><code><span class="script">$ sdlc-state</span>
+{
+  "inbox": { "open": [
+    { "id": "refund-in-part",
+      "type": "question",
+      "blocks": ["refunds"] } ] },
+  "pending_acceptance": ["card-checkout"],
+  "stalled": [],
+  "next": {
+    "action": "execute",
+    "target": "email-receipt",
+    "reason": "tickets are ready to work"
+  }
+}</code></pre>
+  </div>
+</section>
+
+<section id="walk">
+  <div class="section-head">
+    <h2>One feature, all the way round.</h2>
+    <p>Step through what the repository holds, what the script answers, and who moves. Arrow keys work.</p>
+  </div>
+  <div class="stepper" id="stepper" tabindex="0" aria-label="Walk through one feature">
+    <div class="stepper-repo">
+      <h3>The repository</h3>
+      <pre id="step-repo" aria-live="polite"></pre>
+    </div>
+    <div class="stepper-next">
+      <h3>sdlc-state answers</h3>
+      <div class="action" id="step-action"></div>
+      <p id="step-text"></p>
+      <div class="who" id="step-who"></div>
+    </div>
+    <div class="stepper-controls">
+      <button type="button" id="step-prev">← back</button>
+      <button type="button" id="step-next">next →</button>
+      <div class="progress" aria-hidden="true"><i id="step-bar"></i></div>
+      <output id="step-count"></output>
+    </div>
+  </div>
+  <noscript><p>The walk-through needs JavaScript. Every step it shows is described in the next section.</p></noscript>
+</section>
+
+<section id="line">
+  <div class="section-head">
+    <h2>The line, station by station.</h2>
+    <p>Each action is a file the orchestrator loads only when that action fires. Round stations are where you come in.</p>
+  </div>
+
+  <div class="line">
+    <nav class="rail" aria-label="Stations">
+      <ol>
+        <li class="has-you"><a href="#s-init">init</a></li>
+        <li class="has-you"><a href="#s-intention">intention</a></li>
+        <li><a href="#s-plan-epic">plan-epic</a></li>
+        <li class="has-you"><a href="#s-spec">spec</a></li>
+        <li><a href="#s-tickets">ticket</a></li>
+        <li><a href="#s-execute">execute</a></li>
+        <li class="has-you"><a href="#s-deliver">deliver</a></li>
+        <li class="has-you"><a href="#s-close-epic">close-epic</a></li>
+      </ol>
+      <p>Then back to <b>spec</b> for the next feature, or <b>plan-epic</b> for the next epic.</p>
+    </nav>
+
+    <div>
+      <article class="station" id="s-init" data-station>
+        <span class="station-id"><b>init</b> · no <code>docs/agents/sdlc.json</code> yet</span>
+        <h3>Granting autonomy is a conversation.</h3>
+        <p>The first <code>/sdlc</code> in a repository asks before it installs anything. It inspects the stack, the tests, and whether a push to main deploys. Then it settles the config in a single round of questions, installs the rule files, and writes the map agents navigate by.</p>
+        <p>The permission list is <strong>shown, then written</strong> — never the other way round. The deny list is what turns "an agent must not deploy" from a request into a fact.</p>
+        <dl class="ledger">
+          <div class="is-you"><dt>You</dt><dd>Say yes, pick the settings, confirm the permissions.</dd></div>
+          <div><dt>Writes</dt><dd><code>docs/agents/</code> — config, formats, escalation, review and ticket rules, coding standards for your stack — and the map block in <code>CLAUDE.md</code>.</dd></div>
+        </dl>
+      </article>
+
+      <article class="station" id="s-intention" data-station>
+        <span class="station-id"><b>intention</b> · no journeys, or no epic</span>
+        <h3>The one thing no agent can look up is what you want.</h3>
+        <p>So it is asked once, thoroughly. On existing code the agent <strong>reads before it asks</strong>: explorers reconstruct the journeys the code supports today — entry points, data model, test titles — and play them back to you. The interview then covers only the gap.</p>
+        <p>The result is a list of <em>journeys</em>, each <code>exists</code>, <code>partial</code> or <code>wanted</code>. An epic is nothing more than bringing journeys to <code>exists</code>, and it is closed when the journey plays end to end.</p>
+        <dl class="ledger">
+          <div><dt>Acts</dt><dd><code>explorer</code> · haiku, in parallel, read-only.</dd></div>
+          <div class="is-you"><dt>You</dt><dd>Correct the playback, answer the interview, validate the journeys and the order of the epics. After this, nobody asks you <em>what</em> again unless it is genuinely open.</dd></div>
+          <div><dt>Writes</dt><dd><code>PRODUCT.md</code>, <code>docs/journeys.md</code>, <code>docs/roadmap/</code>, and <code>ARCHITECTURE.md</code> — a harness that points to code and never describes it.</dd></div>
+        </dl>
+      </article>
+
+      <article class="station" id="s-plan-epic" data-station>
+        <span class="station-id"><b>plan-epic</b> · an epic with no feature line</span>
+        <h3>Cut the epic. Specify nothing yet.</h3>
+        <p>An epic becomes an ordered list of features, each deliverable and demoable alone. Only the <strong>next</strong> feature gets a spec: the spec of feature two depends on the code feature one leaves behind. Epics are aspirations; the code is the truth.</p>
+        <dl class="ledger">
+          <div><dt>Acts</dt><dd><code>explorer</code> on the modules the journeys touch, then the orchestrator.</dd></div>
+          <div><dt>Writes</dt><dd>The epic's <code>## Features</code>, and under <code>## Reworked</code> whatever the code forced it to change, and why.</dd></div>
+        </dl>
+      </article>
+
+      <article class="station" id="s-spec" data-station>
+        <span class="station-id"><b>spec</b> · the next feature has no spec, or a draft</span>
+        <h3>Draft first, ask after.</h3>
+        <p>You react to a complete proposal instead of answering a questionnaire. An explorer reconciles the epic with the code; the spec-writer drafts the whole spec and sorts <strong>every decision into one of three piles</strong>.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Pile</th><th>Example</th><th>Goes to</th></tr></thead>
+          <tbody>
+            <tr><th>Settled</th><td>"We use the existing database."</td><td>The spec, silently.</td></tr>
+            <tr><th>Taken alone</th><td>"The receipt is plain text." — about <em>how</em>, cheap to undo.</td><td><code>## Decisions taken</code>, with the reason. You may veto later.</td></tr>
+            <tr><th class="you">Yours</th><td class="you">"Do we refund in part?" — about <em>what</em> a user sees, or hard to undo.</td><td class="you">One inbox question each, with a recommendation.</td></tr>
+          </tbody>
+        </table></div>
+        <p>The acceptance walkthrough — the steps by which <em>you</em> will check the feature by hand — is written now. A step that cannot be written is a hole in the spec.</p>
+        <dl class="ledger">
+          <div><dt>Acts</dt><dd><code>explorer</code> · haiku, then <code>spec-writer</code> · opus. Every later step inherits the spec's mistakes.</dd></div>
+          <div class="is-you"><dt>You</dt><dd>Answer the real questions. Approve the spec if <code>spec_gate</code> is <code>always</code>; with <code>questions-only</code>, a spec with no question approves itself.</dd></div>
+          <div><dt>Replaces</dt><dd>The interview before every spec, and "do these test seams match your expectations?"</dd></div>
+        </dl>
+      </article>
+
+      <article class="station" id="s-tickets" data-station>
+        <span class="station-id"><b>ticket</b> · an approved spec with no tickets</span>
+        <h3>A critic, not your gut feeling.</h3>
+        <p>The ticket-writer cuts vertical slices with an honest dependency graph. A script proves the mechanical half — frontmatter, sections, cycles, every story carried by a ticket, every ticket tied to a story. An <strong>independent critic</strong>, which did not write the cut, checks eight rules written as tests with counter-examples: "Create the payments table" fails; "A booking can be paid by card and shows as paid" passes.</p>
+        <p>One revision, one recheck, then escalation. And a way out downstream: an implementer may hand a ticket back as <code>too-big</code>. Tickets are disposable, so re-cutting is cheap — which is why no human gate sits here.</p>
+        <dl class="ledger">
+          <div><dt>Acts</dt><dd><code>ticket-writer</code> · sonnet, <span class="script"><code>sdlc-check-tickets</code></span>, <code>ticket-critic</code> · opus.</dd></div>
+          <div><dt>Replaces</dt><dd>"Does the granularity feel right?"</dd></div>
+        </dl>
+      </article>
+
+      <article class="station" id="s-execute" data-station>
+        <span class="station-id"><b>execute</b> · a frontier of ready tickets</span>
+        <h3>Four honest outcomes.</h3>
+        <p>The <em>frontier</em> is every ticket whose blockers are done. Up to three implementers work it at once, each on one ticket, test-first, in its own worktree. An implementer always returns one of four outcomes — and pushing on past the point where one of the last three became true is the only bad result.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Outcome</th><th>It returns</th><th>Then</th></tr></thead>
+          <tbody>
+            <tr><th><code>done</code></th><td>Commits and the output of <code>verify</code>.</td><td>The merger takes it, one at a time.</td></tr>
+            <tr><th><code>too-big</code></th><td>A proposed split.</td><td>Re-cut, carry on.</td></tr>
+            <tr><th><code>blocked</code></th><td>"The spec says X; the code makes X wrong."</td><td>A <em>how</em>: decided and recorded. A <em>what</em>: <span class="you">your inbox</span>.</td></tr>
+            <tr><th><code>failed</code></th><td>A diagnosis.</td><td>One retry by a <strong>fresh</strong> implementer holding it. Then <span class="you">your inbox</span>.</td></tr>
+          </tbody>
+        </table></div>
+        <p>The merger guarantees three things, or the merge did not happen. The feature branch is green after every merge — two tickets green apart can be red together. No existing test was weakened unless the ticket said why: <span class="script"><code>sdlc-test-guard</code></span> reports every modified test and every added <code>.skip(</code>. And the harness changed in the same merge, by one hand: implementers <em>declare</em> a new module or term, the merger writes it.</p>
+        <dl class="ledger">
+          <div><dt>Acts</dt><dd><code>implementer</code> · sonnet, <code>merger</code> · sonnet. The orchestrator alone writes statuses.</dd></div>
+          <div><dt>Survives</dt><dd>A dead session. An <code>in-progress</code> ticket with no live agent is an orphan: resumed from its branch, or put back on the frontier.</dd></div>
+        </dl>
+      </article>
+
+      <article class="station" id="s-deliver" data-station>
+        <span class="station-id"><b>deliver</b> · every ticket done</span>
+        <h3>The verdict is computed, not felt.</h3>
+        <p>Two reviewers read the diff with fresh contexts and never see each other's: one asks whether it does what the spec says, the other whether it obeys the repository's written rules. A third agent <strong>plays the walkthrough for real</strong> — a browser, real requests, real commands — and keeps the evidence.</p>
+        <div class="table-wrap"><table>
+          <caption>The type of a finding decides whether it blocks. Nobody's opinion does.</caption>
+          <thead><tr><th>Finding</th><th>Must cite</th><th>Blocks</th></tr></thead>
+          <tbody>
+            <tr><th><code>spec-missing</code> · <code>spec-partial</code> · <code>spec-wrong</code></th><td>The spec line.</td><td class="blocks">yes</td></tr>
+            <tr><th><code>out-of-scope</code></th><td>The hunk nobody asked for.</td><td class="blocks">yes</td></tr>
+            <tr><th><code>rule-violated</code></th><td>The written rule, and its file.</td><td class="blocks">yes</td></tr>
+            <tr><th><code>acceptance-failed</code></th><td>The walkthrough step.</td><td class="blocks">yes</td></tr>
+            <tr><th><code>design-guideline</code></th><td>The guideline.</td><td class="blocks">yes</td></tr>
+            <tr><th><code>smell</code></th><td>—</td><td>no — fixed if it sits in changed lines, else one line of debt.</td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>No citation, no block.</strong> A blocking finding that quotes nothing is downgraded to a smell — a reviewer cannot block on taste, or invent a requirement you never wrote. One fix pass, a re-review of the blocking findings only, and only a reviewer lifts a finding.</p>
+        <p>Then <span class="script"><code>sdlc-merge-gate</code></span> answers. The orchestrator merges on that answer and on nothing else. One feature is one merge commit, so one command undoes it; <code>verify</code> runs again on main, and red means an automatic revert and an alert.</p>
+        <dl class="ledger">
+          <div><dt>Acts</dt><dd><code>reviewer-spec</code> and <code>reviewer-standards</code> · opus, <code>acceptance-runner</code> and <code>fixer</code> · sonnet.</dd></div>
+          <div class="is-you"><dt>You</dt><dd>Receive a delivery report: what was built story by story, each walkthrough step marked played-with-evidence or <em>yours</em>, the decisions taken alone, the debt, the command to undo. The loop does not wait for you.</dd></div>
+          <div><dt>Replaces</dt><dd>A human reading the review, and a menu at the end of a branch.</dd></div>
+        </dl>
+      </article>
+
+      <article class="station" id="s-close-epic" data-station>
+        <span class="station-id"><b>close-epic</b> · every feature delivered or dropped</span>
+        <h3>Three green features can still make a broken journey.</h3>
+        <p>The seams between features were nobody's ticket. So the journey is played end to end, on main, as one run — and it moves to <code>exists</code> on proof only. If it does not play, the epic stays open.</p>
+        <p>Every entry of the epic's <code>## Later</code> gets an explicit decision: a new epic, another epic's feature, or dropped with the reason. It is the project's memory of what was put off; nothing in it disappears silently. A short retro then <em>proposes</em> — a recurring smell to promote into a written rule, a sentence that would have spared you a question, a harness pointer an agent was missing.</p>
+        <dl class="ledger">
+          <div><dt>Acts</dt><dd><code>acceptance-runner</code> · sonnet, then the orchestrator.</dd></div>
+          <div class="is-you"><dt>You</dt><dd>One batched proposal. A rule that will block every future merge, and what to work on next, are yours.</dd></div>
+        </dl>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="your-side">
+  <div class="section-head">
+    <h2>Your side of the loop.</h2>
+    <p>Attention is the scarcest thing here, so the list of reasons to spend it is closed.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Five cases reach you. No others.</h3>
+      <ol class="cases">
+        <li><div><b>An unanswered <em>what</em></b><span>Behaviour a user will see has several reasonable answers, and nothing you wrote settles it.</span></div></li>
+        <li><div><b>An irreversible decision</b><span>A migration that drops data, a paid service, a public contract.</span></div></li>
+        <li><div><b>Your intention against the code</b><span>The journey asks for X; the code makes X impossible, or several times the cost.</span></div></li>
+        <li><div><b>Stuck</b><span>A bounded cycle ran out: a ticket failed twice, findings survived the fix pass.</span></div></li>
+        <li><div><b>Out of bounds</b><span>Secrets, deploying, spending, rewriting main. Never worked around.</span></div></li>
+      </ol>
+      <p style="margin-top:1.2rem">Telling <em>what</em> from <em>how</em>: could a person using the product notice the difference and object? Then it is yours. Could only someone reading the code? Then it is the agent's.</p>
+    </div>
+    <div>
+      <h3>An inbox made of files.</h3>
+      <p>One file per item in <code>docs/inbox/</code>. An item is a question you can answer in under a minute without opening the code: the question, <strong>a recommendation</strong>, what it blocks, what continues meanwhile. Answer in the file, or tell the agent. An answer is a decision, so it is copied into the spec — then the item is deleted. The decision survives; the task dies.</p>
+      <p>While an item is open, the script routes around whatever it blocks and works on something else.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Type</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><th><code>alert</code></th><td>Main was reverted.</td></tr>
+          <tr><th><code>question</code></th><td>One of the five cases.</td></tr>
+          <tr><th><code>approval</code></th><td>A gate you switched on: a spec to approve, a feature to merge.</td></tr>
+          <tr><th><code>acceptance</code></th><td>A feature was delivered; here is the walkthrough.</td></tr>
+          <tr><th><code>proposal</code></th><td>Epic closure, a rule to promote, templates to update.</td></tr>
+        </tbody>
+      </table></div>
+      <p>Your phone buzzes in three situations only: everything is blocked, the cap below is reached, or main was reverted.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <p><strong>The price of removing gates is that a misunderstanding is found later.</strong> An agent reviewing an agent shares its blind spots; your walkthrough is the only check in the loop that does not. So <code>max_pending_acceptance</code> — three by default — bounds how far the loop may run ahead of you. Past it, the loop pauses and says so.</p>
+  </div>
+
+  <div class="table-wrap"><table>
+    <caption>The switches, in <code>docs/agents/sdlc.json</code></caption>
+    <thead><tr><th>Setting</th><th>Values</th><th>What it buys</th></tr></thead>
+    <tbody>
+      <tr><th><code>spec_gate</code></th><td><code>always</code> · <code>questions-only</code></td><td>Approve every spec, or only answer real questions. Start on <code>always</code>: autonomy is earned on evidence.</td></tr>
+      <tr><th><code>merge</code></th><td><code>auto</code> · <code>human</code></td><td>Who merges a delivered feature. Where a push to main deploys, the right to merge is the right to ship.</td></tr>
+      <tr><th><code>max_implementers</code></th><td>3</td><td>Concurrent implementers.</td></tr>
+      <tr><th><code>max_pending_acceptance</code></th><td>3</td><td>How far ahead of your walkthroughs the loop may run.</td></tr>
+      <tr><th><code>session_budget_features</code></th><td>3</td><td>What one session may deliver before it stops — the ceiling on a night's spend.</td></tr>
+      <tr><th><code>pull_requests</code></th><td><code>false</code></td><td>Push feature branches and merge through GitHub. The loop never pushes main.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="mechanical">
+  <div class="section-head">
+    <h2>Mechanical where possible. Judgement where unavoidable. Never mixed.</h2>
+    <p>A reviewer's <em>detection</em> is judgement. Everything after it is not. Six small programs — Python, standard library only — hold the guarantees.</p>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Script</th><th>Guarantees</th></tr></thead>
+    <tbody>
+      <tr><th class="script"><code>sdlc-state</code></th><td>The single next action, derived from the files. Deterministic, read-only.</td></tr>
+      <tr><th class="script"><code>sdlc-check-tickets</code></th><td>Valid frontmatter and sections, no cycle, no dangling edge, every story carried, execution order honest.</td></tr>
+      <tr><th class="script"><code>sdlc-check-harness</code></th><td>Every path the map cites exists; every module in the code is on the map. The harness cannot drift either way.</td></tr>
+      <tr><th class="script"><code>sdlc-test-guard</code></th><td>Every existing test modified, renamed or deleted, and every skip marker added, is reported to the merger.</td></tr>
+      <tr><th class="script"><code>sdlc-merge-gate</code></th><td>No open blocking finding, every agent step passed with evidence <em>inside the feature directory</em>, harness true, <code>verify</code> green.</td></tr>
+      <tr><th class="script"><code>sdlc-lock</code></th><td>One session per repository, as a two-hour lease the loop renews each turn.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cols">
+    <div>
+      <h3>One writer per piece of shared state</h3>
+      <p>Statuses, inbox, journeys, debt: the orchestrator. The feature branch, <code>ARCHITECTURE.md</code>, the glossary: the merger. A textual conflict is cheap; two agents naming one notion differently is not — and only an explicit declaration makes that visible.</p>
+    </div>
+    <div>
+      <h3>A refusal beats an instruction</h3>
+      <p>A hook refuses force-pushes, history rewrites and deleting main — matching the whole command, so <code>git -C . push --force</code> does not slip through — plus whatever your project adds to <code>forbidden_commands</code>. An agent under pressure can forget a rule. It cannot forget a refusal.</p>
+    </div>
+  </div>
+</section>
+
+<section id="methods">
+  <div class="section-head">
+    <h2>The loop is ours. The method is Matt Pocock's.</h2>
+    <p>The plugin owns the sequence, the formats and the verdicts. <em>How</em> to interview, write a spec, cut tickets, do TDD, debug and review comes from <a href="https://github.com/mattpocock/skills">mattpocock/skills</a>.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <p><code>methods/</code> holds verbatim copies of eleven of those skills, under their MIT licence. Agents read them as files; they are deliberately not registered as skills, so they never collide with your own.</p>
+      <p>Those methods assume a human is present. The loop runs unattended, so every place where a method turns to the user is <strong>replaced</strong> — the critic instead of the ticket quiz, the spec's testing decisions instead of confirming seams — and each replacement is recorded in <code>methods/gates.json</code>.</p>
+    </div>
+    <div>
+      <h3>Staying current without being surprised</h3>
+      <p>A weekly workflow syncs the copies with upstream and opens a pull request — never a push. An upstream change can add a human gate, and an unattended agent that meets one stalls or guesses.</p>
+      <p>No pattern recognises every way of writing "ask the human", so the guarantee is a hash: the registry records each method's digest <strong>as last read by a person</strong>, and the check fails for any method that changed since. A fresh sync is red by design, until someone reads the diff.</p>
+    </div>
+  </div>
+</section>
+
+<section id="models">
+  <div class="section-head">
+    <h2>Cost follows context pressure and stakes.</h2>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Model</th><th>Roles</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><th>haiku</th><td><code>explorer</code></td><td>Reading is cheap and wide. Facts with <code>path:line</code> evidence, never conclusions.</td></tr>
+      <tr><th>sonnet</th><td><code>ticket-writer</code> · <code>implementer</code> · <code>merger</code> · <code>fixer</code> · <code>acceptance-runner</code></td><td>Building is long and tool-heavy.</td></tr>
+      <tr><th>opus</th><td><code>spec-writer</code> · <code>ticket-critic</code> · <code>reviewer-spec</code> · <code>reviewer-standards</code></td><td>Judging is short, reads a diff, and decides what reaches main.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The orchestrator runs on whatever model your session uses. It stays small on purpose.</p>
+</section>
+
+<section id="install">
+  <div class="section-head">
+    <h2>Install, then type one word.</h2>
+  </div>
+  <div class="cols">
+    <div>
+      <pre><code>/plugin marketplace add kowuoscar/sdlc
+/plugin install sdlc@sdlc</code></pre>
+      <p>Then, in the repository you want built:</p>
+      <pre><code>/sdlc</code></pre>
+      <p>The first run asks before initialising and shows you the permission list before writing it.</p>
+    </div>
+    <div>
+      <h3>It needs</h3>
+      <ul>
+        <li><code>python3</code> 3.9 or later, and <code>git</code>.</li>
+        <li><code>gh</code>, if you switch <code>pull_requests</code> on.</li>
+        <li><code>playwright-cli</code>, to play user-interface walkthroughs.</li>
+        <li>The <a href="https://impeccable.style">impeccable</a> plugin, for projects with a user interface — the one method that is not bundled.</li>
+      </ul>
+      <p>Start with <code>spec_gate: always</code>. Read a few specs the loop wrote alone. Then let go.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p><a href="https://github.com/kowuoscar/sdlc">kowuoscar/sdlc</a> · MIT. The files under <code>methods/</code> are MIT © Matt Pocock. Set in IBM Plex, under the SIL Open Font License.</p>
+</footer>
+
+<script src="loop.js" defer></script>
+</body>
+</html>
