@@ -19,7 +19,7 @@ that feature one leaves behind.
 
 A cut that forces a choice about *what the product does* — not how — is
 escalation case 1. With the human in the session, settle it now with the
-`interview` slot. Otherwise file the question with the epic in `blocks` and
+`interview` method (`methods/grilling/SKILL.md`). Otherwise file the question with the epic in `blocks` and
 leave the epic unplanned; `sdlc-state` moves to the next epic.
 
 Done when the epic has its feature lines and `sdlc-state` answers `spec`.

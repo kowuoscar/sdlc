@@ -20,8 +20,9 @@ to run for hours.
    (when that did not expand, it is the base directory announced when the skill
    loaded); phases and templates are under it. Run `command -v sdlc-state`:
    when it prints nothing, the executables are in `<base directory>/../../bin/` —
-   use that absolute path as `BIN` for every `sdlc-*` call and hand it to every
-   subagent.
+   use that absolute path as `BIN` for every `sdlc-*` call. The bundled methods
+   are in `<base directory>/../../methods/`: that absolute path is `METHODS`.
+   Hand `BIN` and `METHODS` to every subagent.
 2. **Take the lock.** Mint a session token once — `sdlc-$(date +%s)` — and use
    that literal value for the rest of the session:
    `sdlc-lock acquire --session <token>`. A refusal means another session is
@@ -89,7 +90,7 @@ will do next once unblocked.
 Spawn them with the Agent tool as `sdlc:<name>`. Each definition fixes its own
 model — leave the model parameter unset. Hand over **pointers** (paths to the
 spec, the ticket, the rule file, earlier commits) and the `BIN` path, never a
-retelling; every agent returns the fenced `json` result its definition
+retelling — plus `METHODS` and the slot values the agent uses; every agent returns the fenced `json` result its definition
 specifies, and you act on that block alone.
 
 | Agent | Model | Does |
@@ -105,14 +106,27 @@ specifies, and you act on that block alone.
 | `fixer` | sonnet | one pass over the blocking findings |
 | `acceptance-runner` | sonnet | plays the walkthrough steps an agent can play, keeps the evidence |
 
-## Method slots
+## Methods
 
-`skills` in `docs/agents/sdlc.json` names the skill that owns each method:
-`interview`, `domain`, `tdd`, `debugging`, `design`. Reaching a slot, load that
-skill with the Skill tool and follow it; where it says to ask or confirm with
-the user, the phase file says what replaces that. A slot whose skill is absent
-falls back to the essentials written in the agent's own definition.
+The loop owns the sequence, the formats and the verdicts. *How* to interview,
+write a spec, cut tickets, do TDD, debug or review is **method**, and it lives
+in `METHODS` — verbatim copies of upstream skills, read as files, never
+registered as skills. A phase or an agent names the method file it follows and
+says what replaces the places where that method would turn to a human; the
+full list of those replacements is `METHODS/gates.json`. Three rules settle
+every other disagreement between a method and this loop: where formats or
+destinations differ, `docs/agents/issue-tracker.md` wins — specs and tickets
+are files in the repository, never published elsewhere; where a method calls
+the Skill tool with another method's name, read that method's file under
+`METHODS` instead, and skip one that is not bundled; and where a method and
+the agent's own definition disagree, the definition wins.
 
-The `domain` slot runs throughout, never as a phase: the moment a term is
+Five methods are **slots** in `docs/agents/sdlc.json` (`skills`): `interview`,
+`domain`, `tdd`, `debugging`, `design`. The value `bundled` means the file in
+`METHODS`; any other value names an installed skill to load with the Skill
+tool instead. Tell each subagent the value of the slots it uses. `design` has
+no bundled copy — it is an installed skill or plugin, `impeccable` by default.
+
+The `domain` method runs throughout, never as a phase: the moment a term is
 challenged or settles, the glossary change is declared and lands in
 `CONTEXT.md` with the work that settled it.

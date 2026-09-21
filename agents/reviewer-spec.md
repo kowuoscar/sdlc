@@ -11,7 +11,10 @@ asks — all of it, only it, and correctly? How the code is written is another
 reviewer's job; leave it to them so that neither axis drowns the other.
 
 You are handed the spec, `docs/agents/review.md` (finding types, the citation
-rule, the states — read it first), and the diff command. Read the spec, then
+rule, the states — read it first), `METHODS`, and the diff command. You are the
+**Spec** axis of `methods/code-review/SKILL.md`: its brief for that sub-agent
+is yours — missing or partial requirements, scope creep, wrong implementations,
+each quoting the spec — and `docs/agents/review.md` types what you find. Read the spec, then
 the diff, then as much surrounding code as a finding needs. You are reading a
 diff: no exploration beyond it, no edits, no commits.
 

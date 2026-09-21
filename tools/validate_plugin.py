@@ -17,6 +17,12 @@ import re
 import stat
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import check_method_gates  # noqa: E402
+import sync_methods  # noqa: E402
+
+METHODS_PATH = re.compile(r"`(methods/[A-Za-z0-9_./-]+)`")
+
 ACTIONS = ["init", "intention", "apply-answers", "plan-epic", "spec", "ticket",
            "execute", "deliver", "close-epic", "pause", "wait", "idle"]
 MODELS = {"haiku", "sonnet", "opus", "inherit"}
@@ -197,6 +203,9 @@ def check_prose_references(root: str, agent_models: dict, report: Report) -> Non
         for binary in set(re.findall(r"`(sdlc-[a-z-]+)", text)):
             if binary not in BINARIES:
                 report.error("binary-unknown", rel, "calls %s, which is not a shipped executable" % binary)
+        for path in set(METHODS_PATH.findall(text)):
+            if not os.path.exists(os.path.join(root, path)):
+                report.error("methods-path-missing", rel, "refers to `%s`, which does not exist" % path)
 
 
 def check_templates(root: str, report: Report) -> None:
@@ -230,8 +239,45 @@ def check_templates(root: str, report: Report) -> None:
             report.error("marker-duplicate", paths[1], "marker name %r is also used by %s" % (name, paths[0]))
 
 
+def check_methods(root: str, report: Report) -> None:
+    methods_dir = os.path.join(root, "methods")
+
+    upstream = load_json(root, "methods/UPSTREAM.json", report)
+    if upstream is not None and not isinstance(upstream, dict):
+        report.error("json-invalid", "methods/UPSTREAM.json", "must be a JSON object")
+
+    for name in sorted(sync_methods.METHODS):
+        skill_path = os.path.join(methods_dir, name, "SKILL.md")
+        if not os.path.isfile(skill_path):
+            report.error("method-missing", "methods/%s" % name,
+                         "no SKILL.md found for method %r (upstream %s)" % (name, sync_methods.METHODS[name]))
+
+    if not os.path.isfile(os.path.join(methods_dir, "LICENSE")):
+        report.error("file-missing", "methods/LICENSE", "required file is missing")
+
+    gate_result = check_method_gates.check_gates(root)
+    if not gate_result["ok"]:
+        for entry in gate_result["errors"]:
+            path = "methods/" + entry["path"] if entry["path"] else "methods"
+            report.error("method-gate-%s" % entry["code"], path, entry["message"])
+
+    # A vendored method placed under skills/ (rather than methods/) would
+    # register as a skill Claude Code invokes on its own -- the whole point
+    # of vendoring under methods/ is to avoid that.
+    skills_dir = os.path.join(root, "skills")
+    for folder, _dirs, filenames in os.walk(skills_dir):
+        for filename in filenames:
+            if filename != "SKILL.md":
+                continue
+            rel = os.path.relpath(os.path.join(folder, filename), root).replace(os.sep, "/")
+            if rel != "skills/sdlc/SKILL.md":
+                report.error("skill-under-skills", rel,
+                             "only skills/sdlc/SKILL.md may exist under skills/; "
+                             "a vendored method here would register as a skill")
+
+
 def check_shipped_text(root: str, report: Report) -> None:
-    for top in ("skills", "agents", "hooks", "bin", "scripts"):
+    for top in ("skills", "agents", "hooks", "bin", "scripts", "methods"):
         for folder, _dirs, filenames in os.walk(os.path.join(root, top)):
             if "__pycache__" in folder:
                 continue
@@ -268,6 +314,7 @@ def validate(root: str) -> Report:
     check_skill(root, agent_models, report)
     check_prose_references(root, agent_models, report)
     check_templates(root, report)
+    check_methods(root, report)
     check_shipped_text(root, report)
     check_hooks_and_bin(root, report)
     for rel in ("README.md", "LICENSE", "docs/contracts.md"):

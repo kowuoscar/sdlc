@@ -39,10 +39,10 @@ DEFAULTS: Dict[str, Any] = {
     "pull_requests": False,
     "forbidden_commands": [],
     "skills": {
-        "interview": "grilling",
-        "domain": "domain-modeling",
-        "tdd": "tdd",
-        "debugging": "diagnosing-bugs",
+        "interview": "bundled",
+        "domain": "bundled",
+        "tdd": "bundled",
+        "debugging": "bundled",
         "design": "impeccable",
     },
 }

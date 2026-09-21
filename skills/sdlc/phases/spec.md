@@ -20,7 +20,9 @@ the existing spec as its base.
 
 2. **Draft.** Spawn `sdlc:spec-writer` with pointers to the epic, the feature
    line, `PRODUCT.md`, `docs/journeys.md`, `CONTEXT.md`, the reconciliation
-   findings and `docs/agents/issue-tracker.md`. It writes the whole spec and
+   findings, `docs/agents/issue-tracker.md`, `docs/agents/escalation.md`,
+   `METHODS` and the `domain` slot value — its method is
+   `methods/to-spec/SKILL.md`, a synthesis with no interview. It writes the whole spec and
    sorts every decision into one of three **piles**:
 
    | Pile | Goes to |

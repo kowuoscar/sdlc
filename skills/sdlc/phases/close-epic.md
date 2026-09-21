@@ -6,7 +6,7 @@ still make a broken journey — the seams between them were nobody's ticket.
 ## Steps
 
 1. **Play the journeys end to end, on main.** Spawn `sdlc:acceptance-runner`
-   with the epic's `## Journeys`: each journey from its first step to its last,
+   with `docs/agents/review.md` and the epic's `## Journeys`: each journey from its first step to its last,
    as one run, evidence kept under `docs/roadmap/evidence/<epic>/`.
 2. **Move the journeys on proof only.** Played through: `exists` in
    `docs/journeys.md`. Not playable: it stays `partial`, the epic stays open —
@@ -17,7 +17,12 @@ still make a broken journey — the seams between them were nobody's ticket.
    (`status: proposed`, a new `wanted` journey if it is one), a feature line on
    another epic, or dropped with the reason written next to it. Nothing in
    `Later` disappears silently; it is the project's memory of what was put off.
-4. **Retro — proposals only.** Look back over this epic's features for:
+4. **Retro — proposals only.** The method is `methods/retro/SKILL.md` under
+   `METHODS`: its categories are what to look for; its sources here are this
+   epic's specs, findings, delivery reports and closed inbox items rather than
+   session logs; its writing guide is `methods/writing-for-agents/SKILL.md`;
+   and where it presents candidates to the user, you file them. In this loop
+   they usually show up as:
    - smells of the same kind recorded on several features → a rule for
      `docs/agents/coding-standards.md`, or better, a lint rule;
    - escalations that a sharper `PRODUCT.md` or journey would have answered →

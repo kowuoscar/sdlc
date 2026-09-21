@@ -1,0 +1,260 @@
+name: sync-methods
+
+on:
+  schedule:
+    - cron: "17 5 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Sync methods/ from upstream
+        run: |
+          set -o pipefail
+          python tools/sync_methods.py | tee sync-output.json
+
+      - name: Decide whether there is anything to sync
+        id: diff
+        run: |
+          set -euo pipefail
+          total=$(jq '(.changed | length) + (.added | length) + (.removed | length)' sync-output.json)
+          if [ "$total" -eq 0 ]; then
+            echo "::notice::methods/ already matches mattpocock/skills; nothing to sync."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Unit tests
+        id: tests
+        if: steps.diff.outputs.changed == 'true'
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python -m unittest discover -s tests -v > tests-output.txt 2>&1
+          status=$?
+          tail -n 200 tests-output.txt
+          exit "$status"
+
+      - name: Plugin structure
+        id: validate
+        if: steps.diff.outputs.changed == 'true'
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python tools/validate_plugin.py > validate-output.txt 2>&1
+          status=$?
+          tail -n 200 validate-output.txt
+          exit "$status"
+
+      - name: Method gates
+        id: gates
+        if: steps.diff.outputs.changed == 'true'
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python tools/check_method_gates.py >gates-stdout.json 2>gates-stderr.txt
+          status=$?
+          cat gates-stderr.txt gates-stdout.json > gates-output.txt
+          tail -n 200 gates-output.txt
+          exit "$status"
+
+      - name: Compute short shas
+        id: shas
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          old=$(jq -r '.from_commit // ""' sync-output.json)
+          new=$(jq -r '.to_commit // ""' sync-output.json)
+          old_short=${old:0:12}
+          new_short=${new:0:12}
+          old_short=${old_short:-none}
+          new_short=${new_short:-none}
+          {
+            echo "old_short=$old_short"
+            echo "new_short=$new_short"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Check for an existing open pull request
+        id: pr
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          number=$(gh pr list --head sync/methods --state open --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            echo "::notice::Pull request #$number from sync/methods is already open; updating it."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "number=$number" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          OLD_SHORT: ${{ steps.shas.outputs.old_short }}
+          NEW_SHORT: ${{ steps.shas.outputs.new_short }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B sync/methods
+          git add methods
+          git commit -m "chore(methods): sync mattpocock/skills ${OLD_SHORT}..${NEW_SHORT}"
+          # A single long-lived bot branch: force-with-lease is safe here,
+          # nothing but this job ever pushes to it.
+          git push --force-with-lease origin sync/methods
+
+      - name: Ensure the methods-sync label exists
+        id: label
+        if: steps.diff.outputs.changed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh label create methods-sync --color 0e8a16 --description "Weekly sync of vendored methods" --force
+
+      - name: Build pull request body
+        id: body
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          OLD_SHORT: ${{ steps.shas.outputs.old_short }}
+          NEW_SHORT: ${{ steps.shas.outputs.new_short }}
+          TESTS_OUTCOME: ${{ steps.tests.outcome }}
+          VALIDATE_OUTCOME: ${{ steps.validate.outcome }}
+          GATES_OUTCOME: ${{ steps.gates.outcome }}
+        run: |
+          set -euo pipefail
+
+          outcome_mark() {
+            case "$1" in
+              success) echo "PASS" ;;
+              failure) echo "FAIL" ;;
+              *) echo "$1" ;;
+            esac
+          }
+
+          list_or_none() {
+            field="$1"
+            count=$(jq ".${field} | length" sync-output.json)
+            if [ "$count" -eq 0 ]; then
+              echo "(none)"
+            else
+              jq -r ".${field}[]" sync-output.json | sed 's/^/- `/; s/$/`/'
+            fi
+          }
+
+          show_output() {
+            if [ -f "$1" ]; then
+              tail -n 200 "$1"
+            else
+              echo "(not run)"
+            fi
+          }
+
+          unreviewed_methods() {
+            if [ -f gates-stdout.json ] && jq -e . gates-stdout.json >/dev/null 2>&1; then
+              jq -r '.errors[]? | select(.code == "method-unreviewed") | .path' gates-stdout.json | sort -u
+            fi
+          }
+
+          compare_url="https://github.com/mattpocock/skills/compare/${OLD_SHORT}...${NEW_SHORT}"
+
+          {
+            echo "Weekly sync of the vendored methods under \`methods/\` from [mattpocock/skills](https://github.com/mattpocock/skills)."
+            echo
+            echo "Upstream compare: ${compare_url}"
+            echo
+            echo "## Added"
+            list_or_none added
+            echo
+            echo "## Changed"
+            list_or_none changed
+            echo
+            echo "## Removed"
+            list_or_none removed
+            echo
+            echo "## Checks run by this job"
+            echo
+            echo "**Unit tests: $(outcome_mark "$TESTS_OUTCOME")**"
+            echo '```'
+            show_output tests-output.txt
+            echo '```'
+            echo
+            echo "**tools/validate_plugin.py: $(outcome_mark "$VALIDATE_OUTCOME")**"
+            echo '```'
+            show_output validate-output.txt
+            echo '```'
+            echo
+            echo "**tools/check_method_gates.py: $(outcome_mark "$GATES_OUTCOME")**"
+            echo '```'
+            show_output gates-output.txt
+            echo '```'
+            echo
+
+            methods=$(unreviewed_methods)
+            if [ -n "$methods" ]; then
+              echo "## Methods needing review"
+              echo
+              echo "Because \`gates.json\`'s \`reviewed\` hashes changed (or are missing) for:"
+              echo
+              echo "$methods" | sed 's/^/- `/; s/$/`/'
+              echo
+              echo "For each one: read the diff between the old and new \`methods/<name>/\` at the"
+              echo "compare link above, update \`methods/gates.json\` and whatever phase or agent"
+              echo "file replaces any new human gate, then run"
+              echo "\`python3 tools/check_method_gates.py --accept <name>\` (or \`--accept-all\` once"
+              echo "every method above has been read)."
+              echo
+            fi
+
+            echo "A red \`check_method_gates.py\` (or a red unit-test run because of it) is the"
+            echo "**normal, expected state of a fresh sync pull request**: reviewed hashes make the"
+            echo "check fail on every method a sync actually changed, by design, until a person"
+            echo "reads the diff and accepts it."
+            echo
+            echo "Pull requests opened with the workflow token do not trigger the CI workflow; the three checks above were run by this job. Unregistered human gates must be resolved in \`methods/gates.json\` (and in the phase or agent that replaces them) before merging."
+          } > pr-body.md
+
+      - name: Open or update the pull request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          OLD_SHORT: ${{ steps.shas.outputs.old_short }}
+          NEW_SHORT: ${{ steps.shas.outputs.new_short }}
+          LABEL_OUTCOME: ${{ steps.label.outcome }}
+          PR_EXISTS: ${{ steps.pr.outputs.exists }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+          title="chore(methods): sync mattpocock/skills ${OLD_SHORT}..${NEW_SHORT}"
+          if [ "$PR_EXISTS" = "true" ]; then
+            gh pr edit "$PR_NUMBER" --title "$title" --body-file pr-body.md
+          else
+            args=(--title "$title" --body-file pr-body.md --head sync/methods --base "$BASE_BRANCH")
+            if [ "$LABEL_OUTCOME" = "success" ]; then
+              args+=(--label methods-sync)
+            fi
+            gh pr create "${args[@]}"
+          fi
+
+      - name: Fail the run when a check failed, so it stays visibly red
+        if: >-
+          steps.diff.outputs.changed == 'true' &&
+          (steps.tests.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.gates.outcome == 'failure')
+        run: |
+          echo "::error::A check failed on this sync; see the pull request body for details. The pull request was still opened/updated -- resolve the checks, then re-run or push a fix."
+          exit 1

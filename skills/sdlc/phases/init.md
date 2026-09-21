@@ -16,7 +16,10 @@ Templates live in `${CLAUDE_SKILL_DIR}/templates/`.
    interface; existing `PRODUCT.md`, `DESIGN.md`, `CONTEXT.md`,
    `ARCHITECTURE.md`, `docs/agents/`; the project's test, lint and type-check
    commands; whether a push to the main branch deploys (CI workflows, platform
-   config files). Done when you can state each fact with the file that proves it.
+   config files); and, when there is a user interface, whether the `design`
+   skill (`impeccable` by default) is among your available skills — it is the
+   one method the plugin does not bundle. Missing: say how to install it, and
+   carry on; frontend tickets will wait for it. Done when you can state each fact with the file that proves it.
 
 3. **Settle the config in one round.** Ask with AskUserQuestion, recommended
    answer first:

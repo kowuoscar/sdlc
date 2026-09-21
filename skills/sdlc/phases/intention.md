@@ -33,10 +33,10 @@ ticket.
 
 ## The interview
 
-Load the `interview` slot skill and run it here — this is where it belongs.
-Without it: work the decision tree in rounds; each round asks every question
-whose prerequisites are settled, numbered, each with your recommended answer;
-facts are yours to look up, decisions are theirs.
+Run the `interview` method here — this is where it belongs: read
+`methods/grilling/SKILL.md` under `METHODS` and follow it (or load the skill
+the slot names). Keep the glossary alive while you do, with the `domain`
+method, `methods/domain-modeling/SKILL.md`.
 
 Interview about **what and for whom**, never about how. Stop when you could
 write the acceptance walkthrough of every journey without guessing.

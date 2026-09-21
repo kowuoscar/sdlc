@@ -1,0 +1,91 @@
+{
+  "commit": "c55ee46073ed923f86ce59a5eb3b6d895095d1b7",
+  "commit_date": "2026-09-18T11:12:29+01:00",
+  "methods": {
+    "code-review": {
+      "files": [
+        "SKILL.md"
+      ],
+      "path": "skills/engineering/code-review",
+      "sha256": "5c30899b48d9b6ab7e11d757f5e2cde6bfb7a31589e6569554e11fc5d2966a8a"
+    },
+    "diagnosing-bugs": {
+      "files": [
+        "SKILL.md",
+        "scripts/hitl-loop.template.sh"
+      ],
+      "path": "skills/engineering/diagnosing-bugs",
+      "sha256": "51d2db3bee7ade327e0b056f57b9edf32dd93443b69e695e2ebe200b580a77bd"
+    },
+    "domain-modeling": {
+      "files": [
+        "ADR-FORMAT.md",
+        "CONTEXT-FORMAT.md",
+        "SKILL.md"
+      ],
+      "path": "skills/engineering/domain-modeling",
+      "sha256": "9cbda7943fb10b9bb8b673d20040be0f396f513ae4dd80a285048dd795bb8871"
+    },
+    "grilling": {
+      "files": [
+        "SKILL.md"
+      ],
+      "path": "skills/productivity/grilling",
+      "sha256": "ba55ce0d307632006373dfec38ba19cf192c7ebf2d15e433633854eb25fba4a3"
+    },
+    "implement-spec": {
+      "files": [
+        "SKILL.md"
+      ],
+      "path": "skills/in-progress/implement-spec",
+      "sha256": "cddbfa305dd50526a79cb710d93f69af77109db628eaf5a74626fb55209175fe"
+    },
+    "resolving-merge-conflicts": {
+      "files": [
+        "SKILL.md"
+      ],
+      "path": "skills/engineering/resolving-merge-conflicts",
+      "sha256": "bd1f8f49999ab1e99103177f473d2c9624c558305a894e54dc198de05939eeb6"
+    },
+    "retro": {
+      "files": [
+        "SKILL.md"
+      ],
+      "path": "skills/in-progress/retro",
+      "sha256": "c0fb9fd38c7805dc545935ae610c43a6bdd8cddf3b67ac70e9a8adabf48515a6"
+    },
+    "tdd": {
+      "files": [
+        "SKILL.md",
+        "mocking.md",
+        "tests.md"
+      ],
+      "path": "skills/engineering/tdd",
+      "sha256": "ba9e64eb2beb8d66c6f06b60e69d8570206e3384e399d62d422a9e432c08123f"
+    },
+    "to-spec": {
+      "files": [
+        "SKILL.md"
+      ],
+      "path": "skills/engineering/to-spec",
+      "sha256": "737e111ae8e19765b58cb33ceacf081e471d1bd4a758e50182a7d2f02060d06c"
+    },
+    "to-tickets": {
+      "files": [
+        "SKILL.md"
+      ],
+      "path": "skills/engineering/to-tickets",
+      "sha256": "24a4f47a51191dc8da8e5d1e524910c156ae5bfd68c5a1069730b2d06c0417a4"
+    },
+    "writing-for-agents": {
+      "files": [
+        "SKILL-MECHANICS.md",
+        "SKILL.md"
+      ],
+      "path": "skills/productivity/writing-for-agents",
+      "sha256": "764d178582565c68b7e3a805e041960a0c798c63bb62898f5f04757cb23ece6c"
+    }
+  },
+  "repository": "mattpocock/skills",
+  "url": "https://github.com/mattpocock/skills"
+}
