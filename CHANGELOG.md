@@ -4,6 +4,16 @@ All notable changes to this plugin. Versions follow semantic versioning; the
 template markers (`sdlc:template <name> <version>`) version the files the plugin
 writes into target repositories, independently of the plugin version.
 
+## [Unreleased]
+
+### Added
+
+- `site/`: a presentation of the loop — the inversion, the one rule, an
+  interactive walk through one feature, every station, the human's side, the
+  mechanical guarantees, the methods and the models. Static, no third-party
+  request, fonts self-hosted. `tests/test_site.py` keeps it true to the plugin;
+  `pages.yml` deploys it once the repository variable `PAGES_ENABLED` is set.
+
 ## [0.2.0] - 2026-09-21
 
 ### Changed

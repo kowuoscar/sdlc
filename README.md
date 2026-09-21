@@ -17,6 +17,9 @@ Once installed, the short `/sdlc` works too, as long as no personal
 `commands/sdlc.md` or skill of the same name shadows it; this document writes
 `/sdlc` throughout.
 
+A presentation of the whole loop, station by station, lives in [`site/`](site/index.html)
+and is published with GitHub Pages when the repository has it enabled.
+
 ## How it works
 
 **The loop is stateless; the repository is the only state.** Every turn reads
@@ -156,7 +159,8 @@ hooks/              session-start summary · out-of-bounds guard
 methods/            verbatim upstream methods (MIT) · UPSTREAM.json · gates.json
 bin/ · scripts/     the mechanical checks (python, standard library only)
 tools/              validation, packaging, methods sync and gate check, used by CI
-tests/              unit tests of scripts, hooks and tools
+site/               the presentation page (static, self-hosted fonts), deployed by pages.yml
+tests/              unit tests of scripts, hooks, tools and the site
 docs/               contracts.md (data formats) · design.md (why it is built this way)
 ```
 
