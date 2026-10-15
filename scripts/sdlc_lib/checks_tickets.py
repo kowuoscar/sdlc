@@ -26,10 +26,12 @@ Errors (exit 1 when present):
     execution-order-incomplete   a ticket is missing from Execution order
     execution-order-unknown      Execution order names a ticket that does not exist
     execution-order-violation    a ticket is listed before one of its blockers
+    spec-track-unknown      spec.md's track is not one of the defined values
 
 Warnings:
     ticket-too-many-criteria     more than 7 acceptance criteria
     dependency-redundant         a dependency already implied transitively
+    light-track-chain            on a light feature, a ticket depends on another
 """
 from __future__ import annotations
 
@@ -86,6 +88,13 @@ def check_tickets(repo: Path, feature: str, result: Result) -> None:
 
     spec_stories = spec_mod.story_numbers(spec)
     spec_rel = relpath(repo, spec_file)
+    track = spec_mod.track(spec)
+    if track not in spec_mod.TRACKS:
+        result.error(
+            "spec-track-unknown",
+            "track %r is not one of %s" % (track, ", ".join(spec_mod.TRACKS)),
+            spec_rel,
+        )
 
     t_dir = tickets_dir(repo, feature)
     files = ticket_mod.list_ticket_files(t_dir)
@@ -169,6 +178,15 @@ def check_tickets(repo: Path, feature: str, result: Result) -> None:
                     "dependency-missing",
                     "depends_on references missing ticket %r" % d,
                     rel,
+                )
+
+    if track == "light":
+        for slug in sorted(depends_map):
+            if any(d in known_slugs and d != slug for d in depends_map[slug]):
+                result.warning(
+                    "light-track-chain",
+                    "a light feature is one ticket by default; this one depends on another",
+                    relpath(repo, t_dir / (slug + ".md")),
                 )
 
     _check_cycles(depends_map, t_dir, repo, result)

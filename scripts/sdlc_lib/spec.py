@@ -14,6 +14,7 @@ WALKTHROUGH_SECTION = "Acceptance walkthrough"
 EXEC_ORDER_SECTION = "Execution order"
 
 STATUSES = ("draft", "approved", "delivered", "accepted", "dropped")
+TRACKS = ("full", "light")
 
 _ACTOR_RE = re.compile(r"\[(agent|human)\]")
 _STORIES_RE = re.compile(r"\(stories:\s*([0-9,\s]*)\)")
@@ -33,6 +34,13 @@ def load_spec(path: Path) -> SpecData:
     fm, body = parse_frontmatter(text)
     sections = extract_level2_sections(body)
     return SpecData(fm, body, sections)
+
+
+def track(spec: SpecData) -> str:
+    """The spec's ``track``; absent or empty means ``full``. Returned as
+    written otherwise, so the caller can report a value outside TRACKS."""
+    value = spec.frontmatter.get("track", "")
+    return str(value) if value not in (None, "") else "full"
 
 
 def story_numbers(spec: SpecData) -> List[int]:
