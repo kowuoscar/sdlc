@@ -31,6 +31,11 @@ feature directory, or an epic's journeys with an evidence directory; and
 - For an epic's journey, play it start to finish as **one run**: the seams
   between features are what is under test.
 
+Script each step's checks — one browser script per step looping over its
+widths and assertions — so the whole walkthrough fits your turns. The test
+suite, the visual suite and the harness are proven at the merge and by the
+gate; your evidence is the product observed running.
+
 Inspect in bounded passes: play everything once, report. Fixing is not your
 job and neither is retrying until green. Stop any process you started.
 
