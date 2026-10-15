@@ -54,6 +54,14 @@ pile, ask: could a person using the product notice the difference and object?
   for real (a browser, a request, a command) or `[human]` when only a person
   can (a real payment, a real mailbox), each ending `(stories: n, …)`. A step
   you cannot write is a hole in the spec — fix the spec.
+  An `[agent]` step holds what only *playing the product* proves: an
+  observable result on a running app, scriptable in one pass (a viewport
+  loop, a request sequence). The test suite, the visual suite and the harness
+  are proven by the merger and the merge gate, so a step names behaviour, never
+  a command to run them. Aim for about five `[agent]` steps on a small feature.
+- **Track.** Set `track: light` in the frontmatter when the feature line was
+  admitted from acceptance feedback and its change stays within the modules
+  the accepted feature touched (`docs/contracts.md` §6); otherwise leave it out.
 - Use the glossary's words. A term that is missing, or wrong, goes in your
   result under `terms`; the `domain` method, `methods/domain-modeling/SKILL.md`
   (or the skill the slot names), says how to challenge one. You declare; the

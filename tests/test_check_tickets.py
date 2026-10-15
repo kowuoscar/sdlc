@@ -217,6 +217,49 @@ class WarningTests(CheckTicketsTestCase):
         self.assertIn("dependency-redundant", self.codes(result, "warnings"))
 
 
+class TrackTests(CheckTicketsTestCase):
+    def _spec(self, track, execution_order):
+        self.repo.spec(
+            "f1",
+            stories=["one", "two"],
+            walkthrough=["[agent] step (stories: 1, 2)"],
+            execution_order=execution_order,
+            track=track,
+        )
+
+    def test_light_track_with_one_ticket_is_ok(self):
+        self._spec("light", ["t1"])
+        self.repo.ticket("f1", "t1", stories=[1, 2])
+        result = self.check()
+        self.assertTrue(result.ok, result.to_dict())
+        self.assertEqual(result.warnings, [])
+
+    def test_full_and_empty_track_are_ok(self):
+        for track in ("full", ""):
+            self._spec(track, ["t1"])
+            self.repo.ticket("f1", "t1", stories=[1, 2])
+            self.assertTrue(self.check().ok, track)
+
+    def test_unknown_track_is_an_error(self):
+        self._spec("fast", ["t1"])
+        self.repo.ticket("f1", "t1", stories=[1, 2])
+        self.assertIn("spec-track-unknown", self.codes(self.check()))
+
+    def test_light_track_chain_warns(self):
+        self._spec("light", ["t1", "t2"])
+        self.repo.ticket("f1", "t1", stories=[1])
+        self.repo.ticket("f1", "t2", stories=[2], depends_on=["t1"])
+        result = self.check()
+        self.assertTrue(result.ok, result.to_dict())
+        self.assertIn("light-track-chain", self.codes(result, "warnings"))
+
+    def test_full_track_chain_does_not_warn(self):
+        self._spec(None, ["t1", "t2"])
+        self.repo.ticket("f1", "t1", stories=[1])
+        self.repo.ticket("f1", "t2", stories=[2], depends_on=["t1"])
+        self.assertNotIn("light-track-chain", self.codes(self.check(), "warnings"))
+
+
 class CycleCheckIsIterativeTests(CheckTicketsTestCase):
     def test_deep_dependency_chain_does_not_overflow_recursion(self):
         # A long chain (deeper than Python's default recursion limit) must

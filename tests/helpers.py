@@ -129,6 +129,7 @@ class RepoBuilder:
         execution_order: Optional[List[str]] = None,
         open_questions: str = "None",
         marker_version: int = 1,
+        track: Optional[str] = None,
     ) -> Path:
         stories = stories if stories is not None else ["As a user, I want X, so that Y"]
         walkthrough = walkthrough if walkthrough is not None else []
@@ -139,6 +140,7 @@ class RepoBuilder:
             "epic: %s" % epic,
             "status: %s" % status,
             "date: %s" % date,
+        ] + (["track: %s" % track] if track is not None else []) + [
             "---",
             "",
             "<!-- sdlc:template spec %d -->" % marker_version,

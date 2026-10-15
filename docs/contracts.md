@@ -180,6 +180,11 @@ date: 2026-01-31
 `status`: `draft`, `approved`, `delivered`, `accepted`, `dropped`.
 `epic` may be empty for a change admitted outside any epic.
 
+`track` (optional): `full` (the default when absent or empty) or `light`. A
+`light` feature is a follow-up admitted from an `acceptance` answer whose change
+stays within the modules the accepted feature touched; it is cut as one ticket
+by default, and its walkthrough holds only what playing the product proves.
+
 Machine-read sections (level-2 headings, exact text):
 
 - `## User stories` — a numbered list; the number is the story id.
@@ -405,8 +410,11 @@ without the `enabler` label, a story number absent from the spec, a spec story
 carried by no ticket, a walkthrough step without `(stories: …)` or without an
 actor tag, a walkthrough story number absent from the spec, an
 `## Execution order` that lists a ticket before one of its blockers, omits a
-ticket, or names a ticket that does not exist. Warnings: more than 7 acceptance criteria in one ticket; a dependency
-already implied transitively (it serialises work for nothing).
+ticket, or names a ticket that does not exist; a spec `track` other than `full`
+or `light`. Warnings: more than 7 acceptance criteria in one ticket; a dependency
+already implied transitively (it serialises work for nothing); on a `light`
+feature, a ticket that depends on another ticket of the feature (a chain pays
+the full `verify` once per link — one ticket is the light track's shape).
 
 ### `check_harness.py`
 

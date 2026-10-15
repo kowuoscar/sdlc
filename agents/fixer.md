@@ -30,8 +30,10 @@ For each finding that is `open`:
   record it in the spec's `## Decisions taken`, marked `(after review)`.
   The human will see it listed separately.
 
-Commit as `fix(<feature>): <finding ids> <subject>`. Finish with the `verify`
-command from `docs/agents/sdlc.json`, green.
+Iterate on the targeted tests each fix touches. Commit as
+`fix(<feature>): <finding ids> <subject>`, then finish with the `verify`
+command from `docs/agents/sdlc.json`, run once and green; code changed after
+it means running it again.
 
 End with exactly one fenced `json` block:
 

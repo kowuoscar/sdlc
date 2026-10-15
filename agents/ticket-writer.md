@@ -27,6 +27,11 @@ work that could run in parallel; acceptance criteria are observable behaviour;
 risk and any existing test the ticket expects to change, with the reason.
 Point at the spec rather than restating it.
 
+A `track: light` spec is one ticket: its pieces share files and goldens, and
+every further ticket in a chain pays the full `verify` again. Cut more only for
+pieces with no edge between them, which run in parallel, or for a piece too big
+for one implementer.
+
 When you are handed the critic's failures or `sdlc-check-tickets` errors,
 revise exactly what they name.
 
