@@ -4,7 +4,7 @@ All notable changes to this plugin. Versions follow semantic versioning; the
 template markers (`sdlc:template <name> <version>`) version the files the plugin
 writes into target repositories, independently of the plugin version.
 
-## [Unreleased]
+## [0.3.0] - 2026-10-15
 
 ### Added
 
