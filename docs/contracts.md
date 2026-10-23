@@ -438,7 +438,10 @@ deleted, and skip markers added on `+` lines (`.skip(`, `.only(`, `.todo(`,
 `xit(`, `xtest(`, `xdescribe(`, `@Disabled`, `.Disabled`, `@Ignore`,
 `enabled = false`, `t.Skip(`, `t.Skipf(`, `t.SkipNow(`, `@pytest.mark.skip`,
 `pytest.skip(`, `@unittest.skip`; whitespace around `.` and before `(` is
-ignored). `ok` is false when anything is reported; the merger then
+ignored; `xit(`, `xtest(`, `xdescribe(`, `enabled = false` and the `t.Skip*`
+markers match only at a word start -- not after an identifier character, `$`
+or `.` -- so `process.exit(1)`, `isEnabled = false` and
+`this.enabled = false` are not markers). `ok` is false when anything is reported; the merger then
 requires each reported file to be justified in the ticket's `## Regression`.
 
 ### `merge_gate.py <feature> [--no-verify]`
