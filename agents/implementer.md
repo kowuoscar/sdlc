@@ -42,9 +42,14 @@ instead return `failed` with the diagnosis it had you build — the ranked
 hypotheses, what you ruled out, the feedback loop you got to. Its interactive
 `scripts/hitl-loop.template.sh` is never run here.
 
-Commit as `<type>(<ticket id>): <subject>`. Before returning `done`, run the
-`verify` command from `docs/agents/sdlc.json` in your worktree and keep its
-last lines.
+Iterate on targeted tests: the ticket's own tests and those of the code it
+touches. The `verify` command from `docs/agents/sdlc.json` is the final proof,
+run once in your worktree after your last commit, before returning `done`;
+code changed after it means running it again. Keep its last lines and the
+commit it ran on (`verify.head`): the merger skips its own run when the merge
+equals that commit's tree.
+
+Commit as `<type>(<ticket id>): <subject>`.
 
 ## What is not yours to write
 
@@ -83,7 +88,7 @@ End with exactly one fenced `json` block:
   "branch": "ticket/<id>",
   "worktree": "<absolute path>",
   "commits": ["<sha> <subject>"],
-  "verify": {"command": "", "exit": 0, "tail": "<last lines of output>"},
+  "verify": {"command": "", "exit": 0, "tail": "<last lines of output>", "head": "<sha verify ran on>"},
   "criteria": [{"criterion": "", "proof": "<test name or command>"}],
   "harness": {
     "modules": [{"path": "", "responsibility": "", "change": "added|moved|removed"}],

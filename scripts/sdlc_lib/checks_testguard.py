@@ -25,21 +25,25 @@ from .result import Result
 
 # contracts.md section 13. Whitespace around '.' and before '(' is ignored,
 # so each marker is compiled as a small regex rather than matched as a
-# plain substring.
+# plain substring. Markers that begin with an identifier (xit, xtest,
+# xdescribe, t.Skip..., enabled = false) must start a word: they may not follow an identifier
+# character or '.', so `process.exit(1)` does not match `xit(` and
+# `this.enabled = false` / `isEnabled = false` do not match `enabled = false`.
+_WORD_START = r"(?<![\w$.])"
 _SKIP_MARKER_SOURCES = (
     (".skip(", r"\.\s*skip\s*\("),
     (".only(", r"\.\s*only\s*\("),
     (".todo(", r"\.\s*todo\s*\("),
-    ("xit(", r"xit\s*\("),
-    ("xtest(", r"xtest\s*\("),
-    ("xdescribe(", r"xdescribe\s*\("),
+    ("xit(", _WORD_START + r"xit\s*\("),
+    ("xtest(", _WORD_START + r"xtest\s*\("),
+    ("xdescribe(", _WORD_START + r"xdescribe\s*\("),
     ("@Disabled", r"@Disabled"),
     (".Disabled", r"\.\s*Disabled"),
     ("@Ignore", r"@Ignore"),
-    ("enabled = false", r"enabled\s*=\s*false"),
-    ("t.Skip(", r"t\.\s*Skip\s*\("),
-    ("t.Skipf(", r"t\.\s*Skipf\s*\("),
-    ("t.SkipNow(", r"t\.\s*SkipNow\s*\("),
+    ("enabled = false", _WORD_START + r"enabled\s*=\s*false"),
+    ("t.Skip(", _WORD_START + r"t\.\s*Skip\s*\("),
+    ("t.Skipf(", _WORD_START + r"t\.\s*Skipf\s*\("),
+    ("t.SkipNow(", _WORD_START + r"t\.\s*SkipNow\s*\("),
     ("@pytest.mark.skip", r"@pytest\.\s*mark\.\s*skip"),
     ("pytest.skip(", r"pytest\.\s*skip\s*\("),
     ("@unittest.skip", r"@unittest\.\s*skip"),

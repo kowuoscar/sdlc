@@ -4,6 +4,28 @@ All notable changes to this plugin. Versions follow semantic versioning; the
 template markers (`sdlc:template <name> <version>`) version the files the plugin
 writes into target repositories, independently of the plugin version.
 
+## [0.3.0] - 2026-10-15
+
+### Added
+
+- Spec frontmatter `track` (`full` by default, or `light`): a light feature is
+  a small follow-up admitted from acceptance feedback. `sdlc-check-tickets`
+  errors on an unknown track (`spec-track-unknown`) and warns when a light
+  feature chains its tickets (`light-track-chain`). The ticket-writer cuts a
+  light spec as one ticket, and its revision is rechecked by the script alone.
+
+### Changed
+
+- The merger carries the implementer's `verify` result when the staged merge
+  tree equals the tree that run verified, and runs `verify` only when the merge
+  combines other work. Its result records both trees; the implementer's
+  records the commit its `verify` ran on (`verify.head`).
+- Implementers and the fixer iterate on targeted tests and run the full
+  `verify` once at the end.
+- Walkthrough `[agent]` steps hold what only playing the product proves, about
+  five on a small feature; the acceptance-runner scripts each step and leaves
+  the suites to the merge and the gate.
+
 ## [0.2.1] - 2026-09-22
 
 ### Fixed

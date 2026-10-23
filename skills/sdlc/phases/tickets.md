@@ -22,8 +22,10 @@ their judgement is an independent critic upstream and a way out downstream.
    `docs/agents/ticket-critic.md`. It answers with a verdict per rule, each
    failure citing the ticket and the rule.
 4. **One revision.** Failures go back to the writer once, then steps 2–3 run
-   once more. Still failing: escalation case 4, a `question` item carrying the
-   critic's objections — the cut is telling you the spec is unclear.
+   once more — on a `track: light` spec, step 2 alone, since the writer
+   applied the critic's own objections to a one-ticket cut. Still failing:
+   escalation case 4, a `question` item carrying the critic's objections — the
+   cut is telling you the spec is unclear.
 5. Set every ticket `ready-for-agent` — `ready-for-human` only where the work
    needs a person's hands (a credential, an account, a purchase) — write the
    spec's `## Execution order`, run `sdlc-check-tickets` a last time.

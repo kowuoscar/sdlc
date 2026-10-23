@@ -33,9 +33,14 @@ block, `BIN` and `METHODS`.
    it commits once resolved, you commit only after step 4. When it is not clear, `git merge --abort` and return
    `reason: "conflict"` with the paths.
 
-3. **Prove it green.** Run the `verify` command from `docs/agents/sdlc.json`.
-   Two tickets green apart can be red together. Red: `git merge --abort`,
-   return `reason: "verify-red"` with the output tail.
+3. **Prove it green.** Compare trees: `git write-tree` (the merge as staged)
+   against `git rev-parse <verify.head>^{tree}`, where `verify.head` is the
+   commit the implementer's `verify` ran on. Equal: the merge holds exactly
+   what that run proved, so carry its result (`verify.carried: true`).
+   Different: the merge combines work the run never saw, and two tickets green
+   apart can be red together — run the `verify` command from
+   `docs/agents/sdlc.json`. Red: `git merge --abort`, return
+   `reason: "verify-red"` with the output tail.
 
 4. **Apply the harness declarations** from the implementer's result, in this
    same merge: `ARCHITECTURE.md` gets one line per module added, moved or
@@ -59,7 +64,7 @@ End with exactly one fenced `json` block:
   "reason": "",
   "commit": "<sha>",
   "test_guard": {"ok": true, "justified": [""], "unjustified": [""]},
-  "verify": {"command": "", "exit": 0, "tail": ""},
+  "verify": {"command": "", "exit": 0, "tail": "", "carried": false, "merge_tree": "<sha>", "verified_tree": "<sha>"},
   "harness_applied": [""],
   "arbitrated_terms": [{"kept": "", "dropped": "", "why": ""}],
   "conflicts_resolved": [""]
