@@ -26,8 +26,9 @@ from .result import Result
 # contracts.md section 13. Whitespace around '.' and before '(' is ignored,
 # so each marker is compiled as a small regex rather than matched as a
 # plain substring. Markers that begin with an identifier (xit, xtest,
-# xdescribe, t.Skip...) must start a word: they may not follow an identifier
-# character or '.', so `process.exit(1)` does not match `xit(`.
+# xdescribe, t.Skip..., enabled = false) must start a word: they may not follow an identifier
+# character or '.', so `process.exit(1)` does not match `xit(` and
+# `this.enabled = false` / `isEnabled = false` do not match `enabled = false`.
 _WORD_START = r"(?<![\w$.])"
 _SKIP_MARKER_SOURCES = (
     (".skip(", r"\.\s*skip\s*\("),
@@ -39,7 +40,7 @@ _SKIP_MARKER_SOURCES = (
     ("@Disabled", r"@Disabled"),
     (".Disabled", r"\.\s*Disabled"),
     ("@Ignore", r"@Ignore"),
-    ("enabled = false", r"enabled\s*=\s*false"),
+    ("enabled = false", _WORD_START + r"enabled\s*=\s*false"),
     ("t.Skip(", _WORD_START + r"t\.\s*Skip\s*\("),
     ("t.Skipf(", _WORD_START + r"t\.\s*Skipf\s*\("),
     ("t.SkipNow(", _WORD_START + r"t\.\s*SkipNow\s*\("),

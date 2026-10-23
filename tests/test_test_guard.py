@@ -266,6 +266,21 @@ class DiffTests(TestGuardTestCase):
             "test.only('a', () => {});\n",
         )
 
+    def test_enabled_false_inside_identifier_or_property_is_not_a_skip_marker(self):
+        self._assert_not_flagged(
+            "src/feature.ts",
+            "export const a = 1;\n",
+            "export const a = 1;\nisEnabled = false;\nthis.enabled = false;\n"
+            "config.enabled=false;\n",
+        )
+
+    def test_enabled_false_at_word_start_is_reported(self):
+        self._assert_flagged(
+            "src/test/FooTest.kt",
+            "class FooTest {}\n",
+            "class FooTest {}\n@Test(enabled = false)\n",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
