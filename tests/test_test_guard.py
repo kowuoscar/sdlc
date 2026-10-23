@@ -185,6 +185,87 @@ class DiffTests(TestGuardTestCase):
         result = self.check(base)
         self.assertIn("skip-marker-added", self.codes(result))
 
+    # Identifier markers (xit, xtest, xdescribe, t.Skip...) must start a word:
+    # `process.exit(1)` contains the substring `xit(` but is not a skip marker.
+    def _assert_not_flagged(self, path, before, after):
+        self.repo.write(path, before)
+        base = self.repo.git_commit_all("base " + path)
+        self.repo.write(path, after)
+        self.repo.git_commit_all("edit " + path)
+        result = self.check(base)
+        self.assertNotIn("skip-marker-added", self.codes(result), result.to_dict())
+
+    def _assert_flagged(self, path, before, after):
+        self.repo.write(path, before)
+        base = self.repo.git_commit_all("base " + path)
+        self.repo.write(path, after)
+        self.repo.git_commit_all("edit " + path)
+        result = self.check(base)
+        self.assertIn("skip-marker-added", self.codes(result), result.to_dict())
+
+    def test_process_exit_is_not_a_skip_marker(self):
+        self._assert_not_flagged(
+            "src/db/migrate.ts",
+            "export const a = 1;\n",
+            "export const a = 1;\nprocess.exit(1);\nprocess.exit(code);\n",
+        )
+
+    def test_sys_exit_is_not_a_skip_marker(self):
+        self._assert_not_flagged(
+            "scripts/run.py",
+            "import sys\n",
+            "import sys\nsys.exit(0)\n",
+        )
+
+    def test_os_exit_is_not_a_skip_marker(self):
+        self._assert_not_flagged(
+            "scripts/run.lua",
+            "local a = 1\n",
+            "local a = 1\nos.exit(0)\nos.exit (1)\n",
+        )
+
+    def test_identifier_ending_in_marker_is_not_a_skip_marker(self):
+        self._assert_not_flagged(
+            "src/util.ts",
+            "export const a = 1;\n",
+            "export const a = 1;\nmyxtest(1);\nnotxdescribe(2);\nlast.Skip(3);\n",
+        )
+
+    def test_xit_at_word_start_is_reported(self):
+        self._assert_flagged(
+            "src/foo.test.ts",
+            "test('a', () => {});\n",
+            "test('a', () => {});\n  xit('does x', () => {});\n",
+        )
+
+    def test_xit_with_space_before_paren_is_reported(self):
+        self._assert_flagged(
+            "src/foo.test.ts",
+            "test('a', () => {});\n",
+            "test('a', () => {});\nxit ('does x', () => {});\n",
+        )
+
+    def test_xdescribe_after_punctuation_is_reported(self):
+        self._assert_flagged(
+            "src/foo.test.ts",
+            "test('a', () => {});\n",
+            "test('a', () => {});\n;xdescribe('suite', () => {});\n",
+        )
+
+    def test_go_skip_marker_is_reported(self):
+        self._assert_flagged(
+            "pkg/foo_test.go",
+            "func TestA(t *testing.T) {}\n",
+            "func TestA(t *testing.T) { t.Skip(\"reason\") }\n",
+        )
+
+    def test_only_marker_is_reported(self):
+        self._assert_flagged(
+            "src/foo.test.ts",
+            "test('a', () => {});\n",
+            "test.only('a', () => {});\n",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
